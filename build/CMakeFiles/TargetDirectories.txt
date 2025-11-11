@@ -835,13 +835,6 @@
 /home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/wifi_provisioning/CMakeFiles/install.dir
 /home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/wifi_provisioning/CMakeFiles/install/local.dir
 /home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/wifi_provisioning/CMakeFiles/install/strip.dir
-/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/espressif__led_strip/CMakeFiles/__idf_espressif__led_strip.dir
-/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/espressif__led_strip/CMakeFiles/edit_cache.dir
-/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/espressif__led_strip/CMakeFiles/rebuild_cache.dir
-/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/espressif__led_strip/CMakeFiles/list_install_components.dir
-/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/espressif__led_strip/CMakeFiles/install.dir
-/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/espressif__led_strip/CMakeFiles/install/local.dir
-/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/espressif__led_strip/CMakeFiles/install/strip.dir
 /home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/main/CMakeFiles/__idf_main.dir
 /home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/main/CMakeFiles/edit_cache.dir
 /home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/main/CMakeFiles/rebuild_cache.dir
