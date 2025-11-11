@@ -1,7 +1,7 @@
 {
     "version":            "1.2",
     "project_name":       "drone-modcon",
-    "project_version":    "5e0a89f-dirty",
+    "project_version":    "2c52370-dirty",
     "project_path":       "/home/gijs/Documents/espidfProjects/drone-modcon",
     "idf_path":           "/home/gijs/esp/esp-idf",
     "build_dir":          "/home/gijs/Documents/espidfProjects/drone-modcon/build",
