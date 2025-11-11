@@ -1,4 +1,4 @@
-# Install script for directory: /home/gijs/Documents/espidfProjects/blink/main
+# Install script for directory: /home/gijs/Documents/espidfProjects/drone-modcon/main
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

@@ -13,8 +13,8 @@ end
 
 # Load bootloader symbols
 set confirm off
-    add-symbol-file /home/gijs/Documents/espidfProjects/blink/build/bootloader/bootloader.elf
+    add-symbol-file /home/gijs/Documents/espidfProjects/drone-modcon/build/bootloader/bootloader.elf
 set confirm on
 
 # Load application symbols
-file /home/gijs/Documents/espidfProjects/blink/build/blink.elf
+file /home/gijs/Documents/espidfProjects/drone-modcon/build/drone-modcon.elf

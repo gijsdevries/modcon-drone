@@ -17,4 +17,4 @@ set confirm off
 set confirm on
 
 # Load application symbols
-file /home/gijs/Documents/espidfProjects/blink/build/bootloader/bootloader.elf
+file /home/gijs/Documents/espidfProjects/drone-modcon/build/bootloader/bootloader.elf

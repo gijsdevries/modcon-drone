@@ -5,18 +5,18 @@ cmake_minimum_required(VERSION 3.5)
 
 file(MAKE_DIRECTORY
   "/home/gijs/esp/esp-idf/components/bootloader/subproject"
-  "/home/gijs/Documents/espidfProjects/blink/build/bootloader"
-  "/home/gijs/Documents/espidfProjects/blink/build/bootloader-prefix"
-  "/home/gijs/Documents/espidfProjects/blink/build/bootloader-prefix/tmp"
-  "/home/gijs/Documents/espidfProjects/blink/build/bootloader-prefix/src/bootloader-stamp"
-  "/home/gijs/Documents/espidfProjects/blink/build/bootloader-prefix/src"
-  "/home/gijs/Documents/espidfProjects/blink/build/bootloader-prefix/src/bootloader-stamp"
+  "/home/gijs/Documents/espidfProjects/drone-modcon/build/bootloader"
+  "/home/gijs/Documents/espidfProjects/drone-modcon/build/bootloader-prefix"
+  "/home/gijs/Documents/espidfProjects/drone-modcon/build/bootloader-prefix/tmp"
+  "/home/gijs/Documents/espidfProjects/drone-modcon/build/bootloader-prefix/src/bootloader-stamp"
+  "/home/gijs/Documents/espidfProjects/drone-modcon/build/bootloader-prefix/src"
+  "/home/gijs/Documents/espidfProjects/drone-modcon/build/bootloader-prefix/src/bootloader-stamp"
 )
 
 set(configSubDirs )
 foreach(subDir IN LISTS configSubDirs)
-    file(MAKE_DIRECTORY "/home/gijs/Documents/espidfProjects/blink/build/bootloader-prefix/src/bootloader-stamp/${subDir}")
+    file(MAKE_DIRECTORY "/home/gijs/Documents/espidfProjects/drone-modcon/build/bootloader-prefix/src/bootloader-stamp/${subDir}")
 endforeach()
 if(cfgdir)
-  file(MAKE_DIRECTORY "/home/gijs/Documents/espidfProjects/blink/build/bootloader-prefix/src/bootloader-stamp${cfgdir}") # cfgdir has leading slash
+  file(MAKE_DIRECTORY "/home/gijs/Documents/espidfProjects/drone-modcon/build/bootloader-prefix/src/bootloader-stamp${cfgdir}") # cfgdir has leading slash
 endif()
