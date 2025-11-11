@@ -1,0 +1,2 @@
+source /home/gijs/Documents/espidfProjects/blink/build/gdbinit/symbols
+source /home/gijs/Documents/espidfProjects/blink/build/gdbinit/connect

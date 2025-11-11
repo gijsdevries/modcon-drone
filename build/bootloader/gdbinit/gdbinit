@@ -1,0 +1,2 @@
+source /home/gijs/Documents/espidfProjects/blink/build/bootloader/gdbinit/symbols
+source /home/gijs/Documents/espidfProjects/blink/build/bootloader/gdbinit/connect
