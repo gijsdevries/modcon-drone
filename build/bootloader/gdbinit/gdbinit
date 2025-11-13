@@ -1,0 +1,2 @@
+source /home/gijs/Documents/espidfProjects/drone-modcon/build/bootloader/gdbinit/symbols
+source /home/gijs/Documents/espidfProjects/drone-modcon/build/bootloader/gdbinit/connect

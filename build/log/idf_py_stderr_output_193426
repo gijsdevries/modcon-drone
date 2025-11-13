@@ -1,0 +1,11 @@
+Command: ninja all
+CMake Error at /home/gijs/esp/esp-idf-v5.5.1/tools/cmake/component.cmake:318 (message):
+  Include directory
+  '/home/gijs/Documents/espidfProjects/drone-modcon/main/esp_driver_gpio' is
+  not a directory.
+Call Stack (most recent call first):
+  /home/gijs/esp/esp-idf-v5.5.1/tools/cmake/component.cmake:493 (__component_add_include_dirs)
+  main/CMakeLists.txt:1 (idf_component_register)
+
+
+ninja: error: rebuilding 'build.ninja': subcommand failed
