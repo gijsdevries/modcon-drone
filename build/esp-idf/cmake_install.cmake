@@ -1,8 +1,8 @@
-# Install script for directory: /home/gijs/esp/esp-idf-v5.5.1
+# Install script for directory: C:/Users/LuukL/esp/v5.5.1/esp-idf
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/usr/local")
+  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/drone-modcon")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -32,158 +32,158 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
   set(CMAKE_CROSSCOMPILING "TRUE")
 endif()
 
-# Set default install directory permissions.
+# Set path to fallback-tool for dependency-resolution.
 if(NOT DEFINED CMAKE_OBJDUMP)
-  set(CMAKE_OBJDUMP "/home/gijs/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/bin/xtensa-esp32-elf-objdump")
+  set(CMAKE_OBJDUMP "C:/Espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/bin/xtensa-esp32-elf-objdump.exe")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/xtensa/cmake_install.cmake")
+  include("C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/esp-idf/xtensa/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/esp_driver_gpio/cmake_install.cmake")
+  include("C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/esp-idf/esp_driver_gpio/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/esp_timer/cmake_install.cmake")
+  include("C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/esp-idf/esp_timer/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/esp_pm/cmake_install.cmake")
+  include("C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/esp-idf/esp_pm/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/mbedtls/cmake_install.cmake")
+  include("C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/esp-idf/mbedtls/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/bootloader/cmake_install.cmake")
+  include("C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/esp-idf/bootloader/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/esptool_py/cmake_install.cmake")
+  include("C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/esp-idf/esptool_py/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/partition_table/cmake_install.cmake")
+  include("C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/esp-idf/partition_table/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/esp_app_format/cmake_install.cmake")
+  include("C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/esp-idf/esp_app_format/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/esp_bootloader_format/cmake_install.cmake")
+  include("C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/esp-idf/esp_bootloader_format/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/app_update/cmake_install.cmake")
+  include("C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/esp-idf/app_update/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/esp_partition/cmake_install.cmake")
+  include("C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/esp-idf/esp_partition/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/efuse/cmake_install.cmake")
+  include("C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/esp-idf/efuse/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/bootloader_support/cmake_install.cmake")
+  include("C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/esp-idf/bootloader_support/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/esp_mm/cmake_install.cmake")
+  include("C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/esp-idf/esp_mm/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/spi_flash/cmake_install.cmake")
+  include("C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/esp-idf/spi_flash/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/esp_system/cmake_install.cmake")
+  include("C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/esp-idf/esp_system/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/esp_common/cmake_install.cmake")
+  include("C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/esp-idf/esp_common/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/esp_rom/cmake_install.cmake")
+  include("C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/esp-idf/esp_rom/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/hal/cmake_install.cmake")
+  include("C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/esp-idf/hal/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/log/cmake_install.cmake")
+  include("C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/esp-idf/log/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/heap/cmake_install.cmake")
+  include("C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/esp-idf/heap/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/soc/cmake_install.cmake")
+  include("C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/esp-idf/soc/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/esp_security/cmake_install.cmake")
+  include("C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/esp-idf/esp_security/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/esp_hw_support/cmake_install.cmake")
+  include("C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/esp-idf/esp_hw_support/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/freertos/cmake_install.cmake")
+  include("C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/esp-idf/freertos/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/newlib/cmake_install.cmake")
+  include("C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/esp-idf/newlib/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/pthread/cmake_install.cmake")
+  include("C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/esp-idf/pthread/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/cxx/cmake_install.cmake")
+  include("C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/esp-idf/cxx/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/gijs/Documents/espidfProjects/drone-modcon/build/esp-idf/main/cmake_install.cmake")
+  include("C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/esp-idf/main/cmake_install.cmake")
 endif()
 

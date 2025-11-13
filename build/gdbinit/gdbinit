@@ -1,2 +1,2 @@
-source /home/gijs/Documents/espidfProjects/drone-modcon/build/gdbinit/symbols
-source /home/gijs/Documents/espidfProjects/drone-modcon/build/gdbinit/connect
+source C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/gdbinit/symbols
+source C:/Users/LuukL/OneDrive/Documenten/GitHub/modcon-drone/build/gdbinit/connect
