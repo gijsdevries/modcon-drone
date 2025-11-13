@@ -4,7 +4,6 @@
 #include "driver/gpio.h"
 #include "sdkconfig.h"
 
-//#define LED_BLINK (gpio_num_t)3;
 gpio_num_t LED_BLINK = (gpio_num_t)2;
 
 extern "C" {void app_main(void)
