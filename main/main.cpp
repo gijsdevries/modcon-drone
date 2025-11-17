@@ -35,14 +35,10 @@ extern "C" {void app_main(void) {
     // Blink loop
     while (1) {
       // Turn LED ON
-      printf("LED ON\n");
-      gpio_set_level(LED_BLINK, 1);
-      vTaskDelay(10 / portTICK_PERIOD_MS); // Delay 1 second
-
-      // Turn LED OFF
-      printf("LED OFF\n");
-      gpio_set_level(LED_BLINK, 0);
-      vTaskDelay(10 / portTICK_PERIOD_MS); // Delay 1 second
+      printf("Writing byte\n");
+      uint8_t write_buf[2] = {MPU9250_SENSOR_ADDR, 1 << MPU9250_RESET_BIT};
+      i2c_master_transmit(dev_handle, write_buf, sizeof(write_buf), I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS);
+      vTaskDelay(500 / portTICK_PERIOD_MS);
     }
   }}
 
