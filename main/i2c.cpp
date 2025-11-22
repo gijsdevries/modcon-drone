@@ -8,16 +8,16 @@ i2c_master_bus_handle_t bus_handle;
 
 
 uint8_t i2c_distance() {
-  i2c_write(SYSRANGE__START);
+  i2c_write(SYSRANGE__START); //start range in single mode
 
   uint8_t ITR_STATUS = i2c_read(RESULT__INTERRUPT_STATUS_GPIO);
 
-  while (ITR_STATUS != 4) {
+  while (ITR_STATUS != 0x04) { // wait for sensor to be ready
     ITR_STATUS = i2c_read(RESULT__INTERRUPT_STATUS_GPIO);
   }
 
-  uint8_t distance = i2c_read(RESULT__RANGE_VAL);
-  i2c_write(SYSTEM__INTERRUPT_CLEAR);
+  uint8_t distance = i2c_read(RESULT__RANGE_VAL); //read out distance
+  i2c_write(SYSTEM__INTERRUPT_CLEAR); //let sensor know distance has been read out
   return distance;
 }
 
