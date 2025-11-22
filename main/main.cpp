@@ -15,21 +15,22 @@
 
 gpio_num_t LED_BLINK = (gpio_num_t)2;
 
+i2c_master_bus_handle_t bus_handle;
+i2c_master_dev_handle_t dev_handle;
+
+static void i2c_write(uint8_t msg_type);
 static void i2c_master_init(i2c_master_bus_handle_t *bus_handle, i2c_master_dev_handle_t *dev_handle);
 
+enum i2c_msg_types {
+  SYSRANGE__START,
+};
+
 extern "C" {void app_main(void) {
-  i2c_master_bus_handle_t bus_handle;
-  i2c_master_dev_handle_t dev_handle;
   i2c_master_init(&bus_handle, &dev_handle);
+  uint8_t datasend1[3] = {0x00, 0x18, 0x01};
 
   while(1) { 
-    uint8_t datasend1[3] = {0x00, 0x18, 0x01};
-    i2c_master_transmit(dev_handle, datasend1, 3, 1000);
-
-    datasend1[0] = 0x00;
-    datasend1[1] = 0x14;
-    datasend1[2] = 0x04;
-    i2c_master_transmit(dev_handle, datasend1, 3, 1000);
+    i2c_write(SYSRANGE__START);
 
     uint8_t datasend[2] = {0x00, 0x62};
     size_t lensend = sizeof(datasend); 
@@ -62,7 +63,6 @@ static void i2c_master_init(i2c_master_bus_handle_t *bus_handle, i2c_master_dev_
     .scl_io_num = I2C_MASTER_SCL_IO,
     .clk_source = I2C_CLK_SRC_DEFAULT,
     .glitch_ignore_cnt = 7,
-    //    .flags.enable_internal_pullup = true,
   };
   ESP_ERROR_CHECK(i2c_new_master_bus(&bus_config, bus_handle));
 
@@ -72,4 +72,16 @@ static void i2c_master_init(i2c_master_bus_handle_t *bus_handle, i2c_master_dev_
     .scl_speed_hz = I2C_MASTER_FREQ_HZ,
   };
   ESP_ERROR_CHECK(i2c_master_bus_add_device(*bus_handle, &dev_config, dev_handle));
+}
+
+static void i2c_write(uint8_t msg_type) {
+  switch (msg_type) {
+    case SYSRANGE__START: {
+      uint8_t msg[3] = {0x00, 0x18, 0x01};
+      ESP_ERROR_CHECK(i2c_master_transmit(dev_handle, msg, 3, 1000));
+      break;
+    }
+    default:
+      printf("ERR: Unknown msg type recieved");
+  }
 }
