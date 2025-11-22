@@ -1,7 +1,12 @@
 #include "pwm.h"
 
-/* 409 is 5%,   820 is 10% */
-void setPWM(uint32_t duty_cycle) {
+#define FIVE_PER_DUTY_CYCLE (8192 * 0.05)
+#define CHAR_TO_DUTY_CYCLE_FACTOR 1.59
+
+/* set 0 for 5% duty cycle, 255 for 10% duty cycle */
+void setPWM(uint8_t motorspeed) {
+  uint16_t duty_cycle = FIVE_PER_DUTY_CYCLE + (motorspeed * 1.59); 
+
   ESP_ERROR_CHECK(ledc_set_duty(LEDC_MODE, LEDC_CHANNEL, duty_cycle));
   ESP_ERROR_CHECK(ledc_update_duty(LEDC_MODE, LEDC_CHANNEL));
 }
