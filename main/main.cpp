@@ -12,7 +12,7 @@ extern "C" {void app_main(void) {
   i2c_master_init();
 
   while(1) {
-    uint8_t distance = i2c_distance(); //push in mai?
+    uint8_t distance = i2c_distance(); 
     printf("distance: %d\n", distance);
     vTaskDelay(100 / portTICK_PERIOD_MS); 
   }
