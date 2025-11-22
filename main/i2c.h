@@ -15,9 +15,10 @@
 extern i2c_master_dev_handle_t dev_handle;
 extern i2c_master_bus_handle_t bus_handle;
 
+void i2c_master_init();
 uint8_t i2c_distance();
 uint8_t i2c_read(uint8_t msg_type);
-static void i2c_write(uint8_t msg_type);
+void i2c_write(uint8_t msg_type);
 
 enum i2c_msg_types {
   /* writing */
