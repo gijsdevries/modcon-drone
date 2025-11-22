@@ -18,11 +18,14 @@ gpio_num_t LED_BLINK = (gpio_num_t)2;
 i2c_master_bus_handle_t bus_handle;
 i2c_master_dev_handle_t dev_handle;
 
+uint8_t i2c_read(uint8_t msg_type);
 static void i2c_write(uint8_t msg_type);
 static void i2c_master_init(i2c_master_bus_handle_t *bus_handle, i2c_master_dev_handle_t *dev_handle);
 
 enum i2c_msg_types {
   SYSRANGE__START,
+  SYSTEM__INTERRUPT_CLEAR,
+  RESULT__INTERRUPT_STATUS_GPIO,
 };
 
 extern "C" {void app_main(void) {
@@ -41,16 +44,16 @@ extern "C" {void app_main(void) {
     uint8_t datasend3[2] = {0x00, 0x4F};
     size_t lensend3 = sizeof(datasend3); 
 
-    while (datarec != 4) {
-      ESP_ERROR_CHECK(i2c_master_transmit_receive(dev_handle, datasend3, lensend3, &datarec, lenrec, I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS));
+    uint8_t ITR_STATUS = i2c_read(RESULT__INTERRUPT_STATUS_GPIO);
+
+    while (ITR_STATUS != 4) {
+      ITR_STATUS = i2c_read(RESULT__INTERRUPT_STATUS_GPIO);
     }
 
     datasend[1] = 0x62;
     ESP_ERROR_CHECK(i2c_master_transmit_receive(dev_handle, datasend, lensend, &datarec, lenrec, I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS));
     printf("distance: %d\n", datarec);
-    datasend1[1] = 0x15;
-    datasend1[2] = 0x07;
-    i2c_master_transmit(dev_handle, datasend1, 3, 1000);
+    i2c_write(SYSTEM__INTERRUPT_CLEAR);
     vTaskDelay(100 / portTICK_PERIOD_MS); 
   }
 }}
@@ -74,14 +77,38 @@ static void i2c_master_init(i2c_master_bus_handle_t *bus_handle, i2c_master_dev_
   ESP_ERROR_CHECK(i2c_master_bus_add_device(*bus_handle, &dev_config, dev_handle));
 }
 
+uint8_t i2c_read(uint8_t msg_type) {
+  uint8_t i2c_recieved = 0;
+  switch (msg_type) {
+    case RESULT__INTERRUPT_STATUS_GPIO: 
+      {
+        uint8_t msg[2] = {0x00, 0x4F};
+        ESP_ERROR_CHECK(i2c_master_transmit_receive(dev_handle, msg, 2, &i2c_recieved, 1, I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS));
+        break;
+      }
+    default: 
+      printf("ERR i2c_read(): invalid argument recieved\n");
+  }
+
+  return i2c_recieved;
+}
+
 static void i2c_write(uint8_t msg_type) {
   switch (msg_type) {
-    case SYSRANGE__START: {
-      uint8_t msg[3] = {0x00, 0x18, 0x01};
-      ESP_ERROR_CHECK(i2c_master_transmit(dev_handle, msg, 3, 1000));
-      break;
-    }
+    case SYSRANGE__START: 
+      {
+        uint8_t msg[3] = {0x00, 0x18, 0x01};
+        ESP_ERROR_CHECK(i2c_master_transmit(dev_handle, msg, 3, 1000));
+        break;
+      }
+    case SYSTEM__INTERRUPT_CLEAR: 
+      {
+        uint8_t msg[3] = {0x00, 0x15, 0x07};
+        ESP_ERROR_CHECK(i2c_master_transmit(dev_handle, msg, 3, 1000));
+        break;
+
+      }
     default:
-      printf("ERR: Unknown msg type recieved");
+      printf("ERR i2c_write(): invalid argument recieved\n");
   }
 }
