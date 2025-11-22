@@ -42,17 +42,15 @@ extern "C" {void app_main(void) {
 
     while (datarec != 4) {
       ESP_ERROR_CHECK(i2c_master_transmit_receive(dev_handle, datasend3, lensend3, &datarec, lenrec, I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS));
-      printf("ITR STATUS: datarec: %d lenrec: %d\n", datarec, lenrec);
-      vTaskDelay(500 / portTICK_PERIOD_MS);
     }
 
     datasend[1] = 0x62;
     ESP_ERROR_CHECK(i2c_master_transmit_receive(dev_handle, datasend, lensend, &datarec, lenrec, I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS));
-    printf("datarec: %d lenrec: %d\n", datarec, lenrec);
+    printf("distance: %d\n", datarec);
     datasend1[1] = 0x15;
     datasend1[2] = 0x07;
     i2c_master_transmit(dev_handle, datasend1, 3, 1000);
-    vTaskDelay(500 / portTICK_PERIOD_MS); 
+    vTaskDelay(100 / portTICK_PERIOD_MS); 
   }
 }}
 
