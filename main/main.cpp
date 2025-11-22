@@ -22,30 +22,28 @@ extern "C" {void app_main(void) {
   i2c_master_dev_handle_t dev_handle;
   i2c_master_init(&bus_handle, &dev_handle);
 
-  uint8_t datasend1[3] = {0x00, 0x18, 0x02};
-  i2c_master_transmit(dev_handle, datasend1, 3, 1000);
-
-  datasend1[2] = 0x03;
-  i2c_master_transmit(dev_handle, datasend1, 3, 1000);
-
-  datasend1[0] = 0x00;
-  datasend1[1] = 0x14;
-  datasend1[2] = 0x04;
-  i2c_master_transmit(dev_handle, datasend1, 3, 1000);
-
-  uint8_t datasend[2] = {0x00, 0x62};
-  size_t lensend = sizeof(datasend); 
-
-  uint8_t datarec = 0; 
-  size_t lenrec = sizeof(datarec);
-
   while(1) { 
+    uint8_t datasend1[3] = {0x00, 0x18, 0x01};
+    i2c_master_transmit(dev_handle, datasend1, 3, 1000);
+
+    datasend1[0] = 0x00;
+    datasend1[1] = 0x14;
+    datasend1[2] = 0x04;
+    i2c_master_transmit(dev_handle, datasend1, 3, 1000);
+
+    uint8_t datasend[2] = {0x00, 0x62};
+    size_t lensend = sizeof(datasend); 
+
+    uint8_t datarec = 0; 
+    size_t lenrec = sizeof(datarec);
+
     uint8_t datasend3[2] = {0x00, 0x4F};
     size_t lensend3 = sizeof(datasend3); 
 
     while (datarec != 4) {
       ESP_ERROR_CHECK(i2c_master_transmit_receive(dev_handle, datasend3, lensend3, &datarec, lenrec, I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS));
       printf("ITR STATUS: datarec: %d lenrec: %d\n", datarec, lenrec);
+      vTaskDelay(500 / portTICK_PERIOD_MS);
     }
 
     datasend[1] = 0x62;
