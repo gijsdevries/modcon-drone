@@ -24,6 +24,7 @@ enum i2c_msg_types {
   /* writing */
   SYSRANGE__START,
   SYSTEM__INTERRUPT_CLEAR,
+  SYSTEM__INTERRUPT_CONFIG_GPIO,
 
   /* reading */
   RESULT__INTERRUPT_STATUS_GPIO,

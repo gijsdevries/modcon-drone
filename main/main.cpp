@@ -4,10 +4,10 @@
 
 extern "C" {void app_main(void) {
   i2c_master_init();
+  i2c_write(SYSTEM__INTERRUPT_CONFIG_GPIO); 
   example_ledc_init();
 
   while(1) {
-
     uint8_t distance = i2c_distance(); 
     setPWM(distance);
     printf("distance: %d\n", distance);
