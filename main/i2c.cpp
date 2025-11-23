@@ -14,6 +14,8 @@ uint8_t i2c_distance() {
 
   while (ITR_STATUS != 0x04) { // wait for sensor to be ready
     ITR_STATUS = i2c_read(RESULT__INTERRUPT_STATUS_GPIO);
+    printf("ERR i2c_distance(): ITR STATUS: %d", ITR_STATUS);
+    vTaskDelay(100 / portTICK_PERIOD_MS); 
   }
 
   uint8_t distance = i2c_read(RESULT__RANGE_VAL); //read out distance
@@ -78,7 +80,11 @@ void i2c_write(uint8_t msg_type) {
         uint8_t msg[3] = {0x00, 0x15, 0x07};
         ESP_ERROR_CHECK(i2c_master_transmit(dev_handle, msg, 3, 1000));
         break;
-
+      }
+    case SYSTEM__INTERRUPT_CONFIG_GPIO:
+      {
+        uint8_t msg[3] = {0x00, 0x14, 0x04};
+        ESP_ERROR_CHECK(i2c_master_transmit(dev_handle, msg, 3, 1000));
       }
     default:
       printf("ERR i2c_write(): invalid argument recieved\n");
