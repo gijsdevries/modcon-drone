@@ -1,3 +1,3 @@
-idf_component_register(SRCS "main.cpp" "i2c.cpp"
-                       PRIV_REQUIRES "spi_flash" "esp_driver_gpio" "esp_driver_i2c" "esp_driver_mcpwm"
+idf_component_register(SRCS "hello_world_main.c"
+                       PRIV_REQUIRES spi_flash
                        INCLUDE_DIRS "")
