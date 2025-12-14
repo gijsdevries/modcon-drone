@@ -3,6 +3,7 @@
 #include "esp_wifi.h"
 #include "esp_system.h"
 #include "esp_log.h"
+#include "esp_mac.h"
 #include "driver/uart.h"
 #include "string.h"
 #include "driver/gpio.h"
@@ -15,7 +16,7 @@
 #define ESPNOW_WIFI_IF   WIFI_IF_STA
 
 // REPLACE WITH YOUR RECEIVER MAC Address
-uint8_t broadcastAddress[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+uint8_t broadcastAddress[] = {0x80, 0xF3, 0xDA, 0x55, 0x9B, 0x00};
 
 // Structure example to send data
 // Must match the receiver structure
@@ -48,6 +49,8 @@ static void example_wifi_init(void)
 
 extern "C" {void app_main(void)
   {
+    uint8_t mac_addr[6]; // Buffer for the MAC address
+
     gpio_reset_pin((gpio_num_t)2);
     gpio_set_direction((gpio_num_t)2, GPIO_MODE_OUTPUT);
 
