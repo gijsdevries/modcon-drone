@@ -1,73 +1,94 @@
-#include <stdio.h>
+/* UART asynchronous example, that uses separate RX and TX tasks
+
+   This example code is in the Public Domain (or CC0 licensed, at your option.)
+
+   Unless required by applicable law or agreed to in writing, this
+   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+   CONDITIONS OF ANY KIND, either express or implied.
+*/
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "sdkconfig.h"
-#include "esp_now.h"
-#include "esp_wifi.h"
-#include "driver/gpio.h"
+#include "esp_system.h"
+#include "esp_log.h"
 #include "driver/uart.h"
-#include "nvs_flash.h"
+#include "string.h"
+#include "driver/gpio.h"
+#include "stdio.h"
 
-#define ESPNOW_WIFI_MODE WIFI_MODE_STA
-#define ESPNOW_WIFI_IF   ESP_IF_WIFI_STA
+static const int RX_BUF_SIZE = 1024;
 
-#define RXD_PIN (gpio_num_t)3
-#define TXD_PIN (gpio_num_t)1
-#define RX_BUF_SIZE 1024
+#define TXD_PIN (gpio_num_t)1 
+#define RXD_PIN (gpio_num_t)16
 
-void uart_init() {
-  const uart_config_t uart_config = {
-    .baud_rate = 115200, 
-    .data_bits = UART_DATA_8_BITS,
-    .parity = UART_PARITY_DISABLE,
-    .stop_bits = UART_STOP_BITS_1,
-    .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
-    .source_clk = UART_SCLK_DEFAULT,
-  };
-
-  uart_driver_install(UART_NUM_0, RX_BUF_SIZE * 2, 0, 0, NULL, 0);
-  uart_param_config(UART_NUM_0, &uart_config);
-  uart_set_pin(UART_NUM_0, TXD_PIN, RXD_PIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
-}
-
-static void example_wifi_init(void)
+void init(void)
 {
-  ESP_ERROR_CHECK(esp_netif_init());
-  ESP_ERROR_CHECK(esp_event_loop_create_default());
-  wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
-  ESP_ERROR_CHECK( esp_wifi_init(&cfg) );
-  ESP_ERROR_CHECK( esp_wifi_set_storage(WIFI_STORAGE_RAM) );
-  ESP_ERROR_CHECK( esp_wifi_set_mode(ESPNOW_WIFI_MODE) );
-  ESP_ERROR_CHECK( esp_wifi_start());
+    const uart_config_t uart_config = {
+        .baud_rate = 115200,
+        .data_bits = UART_DATA_8_BITS,
+        .parity = UART_PARITY_DISABLE,
+        .stop_bits = UART_STOP_BITS_1,
+        .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
+        .source_clk = UART_SCLK_DEFAULT,
+    };
+    // We won't use a buffer for sending data.
+    uart_driver_install(UART_NUM_1, RX_BUF_SIZE * 2, 0, 0, NULL, 0);
+    uart_param_config(UART_NUM_1, &uart_config);
+    uart_set_pin(UART_NUM_1, TXD_PIN, RXD_PIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
 }
 
-extern "C" {void app_main(void) {
+int sendData(const char* logName, const char* data)
+{
+    const int len = strlen(data);
+    const int txBytes = uart_write_bytes(UART_NUM_1, data, len);
+    printf("Wrote %d bytes", txBytes);
+    return txBytes;
+}
 
-  // Initialize NVS
-  esp_err_t ret = nvs_flash_init();
-  if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
-    ESP_ERROR_CHECK( nvs_flash_erase() );
-    ret = nvs_flash_init();
-  }
-  ESP_ERROR_CHECK( ret );
+static void tx_task(void *arg)
+{
+    static const char *TX_TASK_TAG = "TX_TASK";
+    esp_log_level_set(TX_TASK_TAG, ESP_LOG_INFO);
+    while (1) {
+        printf("testing printf\n");
+        sendData(TX_TASK_TAG, "Heed");
+        vTaskDelay(2000 / portTICK_PERIOD_MS);
+    }
+}
 
-  example_wifi_init();
-  esp_now_init(); 
+static void rx_task(void *arg)
+{
+    static const char *RX_TASK_TAG = "RX_TASK";
+    esp_log_level_set(RX_TASK_TAG, ESP_LOG_INFO);
+    char* data = (char*) malloc(RX_BUF_SIZE + 1);
+    while (1) {
+      const int rxBytes = uart_read_bytes(UART_NUM_1, data, RX_BUF_SIZE, 1000 / portTICK_PERIOD_MS);
+      if (rxBytes > 0) {
+        //if ((strcmp(data, "Hello world") == 0) {
+        if (rxBytes == 3) {
+          gpio_set_level((gpio_num_t)2, 1);
+          vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay 1 second
+          gpio_set_level((gpio_num_t)2, 0);
+        } 
+        else {
+          gpio_set_level((gpio_num_t)2, 1);
+          vTaskDelay(100 / portTICK_PERIOD_MS); // Delay 1 second
+          gpio_set_level((gpio_num_t)2, 0);
 
-  uart_init();
+        }
 
-  //  uint8_t mac_adr[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-  //  uint8_t distance = 12;
-  uint8_t buf_rx[1024];
-  uint8_t buf_tx[1024] = "hoi";
+        data[rxBytes] = 0;
+        ESP_LOG_BUFFER_HEXDUMP(RX_TASK_TAG, data, rxBytes, ESP_LOG_INFO);
+      }
+    }
+    free(data);
+}
 
-  while (1) {
-    ESP_ERROR_CHECK(uart_write_bytes(UART_NUM_0, buf_tx, 1024));
-//    printf("buf_tx: %s\n", buf_tx);
-    vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay 1 second
+extern "C" {void app_main(void)
+  {
+    gpio_reset_pin((gpio_num_t)2);
+    gpio_set_direction((gpio_num_t)2, GPIO_MODE_OUTPUT);
 
-    ESP_ERROR_CHECK(uart_read_bytes(UART_NUM_0, buf_rx, 1024, portTICK_PERIOD_MS / 1000));
-    printf("buf_rx: %s\n", buf_rx);
-    vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay 1 second
-  }
-}}
+    init();
+    xTaskCreate(rx_task, "uart_rx_task", 4096, NULL, configMAX_PRIORITIES - 1, NULL);
+    xTaskCreate(tx_task, "uart_tx_task", 4096, NULL, configMAX_PRIORITIES - 2, NULL);
+  }}
