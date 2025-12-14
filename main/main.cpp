@@ -14,6 +14,7 @@
 #include "string.h"
 #include "driver/gpio.h"
 #include "stdio.h"
+#include "string.h"
 
 static const int RX_BUF_SIZE = 1024;
 
@@ -43,21 +44,25 @@ static void rx_task(void *arg)
     while (1) {
       const int rxBytes = uart_read_bytes(UART_NUM_1, data, RX_BUF_SIZE, 1000 / portTICK_PERIOD_MS);
       if (rxBytes > 0) {
-        //if ((strcmp(data, "Hello world") == 0) {
-        if (rxBytes == 3) {
+        int distance = atoi(data);
+
+        if (distance >= 10 && distance <= 200) {
+          //valid arg
+          printf("valid height: %d\n", distance);
           gpio_set_level((gpio_num_t)2, 1);
           vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay 1 second
           gpio_set_level((gpio_num_t)2, 0);
-        } 
-        else {
-          gpio_set_level((gpio_num_t)2, 1);
-          vTaskDelay(100 / portTICK_PERIOD_MS); // Delay 1 second
-          gpio_set_level((gpio_num_t)2, 0);
-
         }
-
+        else {
+          printf("invalid height: %d\n", distance);
+          for (char i=0; i < 10; i++) {
+            gpio_set_level((gpio_num_t)2, 1);
+            vTaskDelay(50 / portTICK_PERIOD_MS); // Delay 1 second
+            gpio_set_level((gpio_num_t)2, 0);
+            vTaskDelay(50 / portTICK_PERIOD_MS); // Delay 1 second
+          }
+        }
         data[rxBytes] = 0;
-        ESP_LOG_BUFFER_HEXDUMP(RX_TASK_TAG, data, rxBytes, ESP_LOG_INFO);
       }
     }
     free(data);
@@ -68,8 +73,6 @@ extern "C" {void app_main(void)
     gpio_reset_pin((gpio_num_t)2);
     gpio_set_direction((gpio_num_t)2, GPIO_MODE_OUTPUT);
 
-    printf("testing printf1\n");
     init();
-    printf("testing printf1\n");
     xTaskCreate(rx_task, "uart_rx_task", 4096, NULL, configMAX_PRIORITIES - 1, NULL);
   }}
