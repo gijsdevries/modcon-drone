@@ -18,7 +18,7 @@
 static const int RX_BUF_SIZE = 1024;
 
 #define TXD_PIN (gpio_num_t)1 
-#define RXD_PIN (gpio_num_t)16
+#define RXD_PIN (gpio_num_t)3
 
 void init(void)
 {
@@ -90,5 +90,5 @@ extern "C" {void app_main(void)
 
     init();
     xTaskCreate(rx_task, "uart_rx_task", 4096, NULL, configMAX_PRIORITIES - 1, NULL);
-    xTaskCreate(tx_task, "uart_tx_task", 4096, NULL, configMAX_PRIORITIES - 2, NULL);
+    //xTaskCreate(tx_task, "uart_tx_task", 4096, NULL, configMAX_PRIORITIES - 2, NULL);
   }}
