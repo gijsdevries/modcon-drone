@@ -17,7 +17,6 @@
 
 static const int RX_BUF_SIZE = 1024;
 
-#define TXD_PIN (gpio_num_t)1 
 #define RXD_PIN (gpio_num_t)3
 
 void init(void)
@@ -33,26 +32,7 @@ void init(void)
     // We won't use a buffer for sending data.
     uart_driver_install(UART_NUM_1, RX_BUF_SIZE * 2, 0, 0, NULL, 0);
     uart_param_config(UART_NUM_1, &uart_config);
-    uart_set_pin(UART_NUM_1, TXD_PIN, RXD_PIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
-}
-
-int sendData(const char* logName, const char* data)
-{
-    const int len = strlen(data);
-    const int txBytes = uart_write_bytes(UART_NUM_1, data, len);
-    printf("Wrote %d bytes", txBytes);
-    return txBytes;
-}
-
-static void tx_task(void *arg)
-{
-    static const char *TX_TASK_TAG = "TX_TASK";
-    esp_log_level_set(TX_TASK_TAG, ESP_LOG_INFO);
-    while (1) {
-        printf("testing printf\n");
-        sendData(TX_TASK_TAG, "Heed");
-        vTaskDelay(2000 / portTICK_PERIOD_MS);
-    }
+    uart_set_pin(UART_NUM_1, -1, RXD_PIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
 }
 
 static void rx_task(void *arg)
@@ -88,7 +68,8 @@ extern "C" {void app_main(void)
     gpio_reset_pin((gpio_num_t)2);
     gpio_set_direction((gpio_num_t)2, GPIO_MODE_OUTPUT);
 
+    printf("testing printf1\n");
     init();
+    printf("testing printf1\n");
     xTaskCreate(rx_task, "uart_rx_task", 4096, NULL, configMAX_PRIORITIES - 1, NULL);
-    //xTaskCreate(tx_task, "uart_tx_task", 4096, NULL, configMAX_PRIORITIES - 2, NULL);
   }}
