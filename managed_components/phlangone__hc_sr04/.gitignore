@@ -1,0 +1,26 @@
+# ESP-IDF build output
+/build/
+*.elf
+*.bin
+*.map
+*.hex
+*.log
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Python virtual environments
+venv/
+__pycache__/
+*.pyc
+
+# Other
+*.bak
+*.tmp
+*.orig
