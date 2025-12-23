@@ -1,17 +1,21 @@
 dependencies:
-  hc_sr04:
-    dependencies: []
-    source:
-      path: /home/gijs/Documents/espidfProjects/modcon/components/hc_sr04
-      type: local
-    version: 1.1.1
   idf:
     source:
       type: idf
     version: 5.5.1
+  phlangone/hc_sr04:
+    component_hash: dda976bebced7a035d1547706bc248560015525d39fc02ff64deccf1868d0ad2
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=5.0'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 1.1.1
 direct_dependencies:
 - idf
 - phlangone/hc_sr04
-manifest_hash: 06cdd22f70ba03a4d41d055e3549cd444018851dc64b2ebbda0edeb16fc88941
+manifest_hash: a3738a1994748804d0e149c8162f1f33e425d978f5beff7c2c6594eccb187e2b
 target: esp32
 version: 2.0.0
