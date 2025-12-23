@@ -14,6 +14,6 @@
 #define LEDC_FREQUENCY          (50) // Frequency in Hertz.
 
 void pwm_init(void);
-void setPWM(float motorspeed);
+void setPWM(uint8_t motorspeed);
 
 #endif

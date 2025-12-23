@@ -3,7 +3,7 @@
 #define TEN_PERCENT_DUTY_CYCLE (8192 * 0.10)
 #define FLOAT_TO_DUTY_CYCLE_FACTOR 1.59
 
-void setPWM(float motorspeed) {
+void setPWM(uint8_t motorspeed) {
   uint16_t duty_cycle = TEN_PERCENT_DUTY_CYCLE - (motorspeed * FLOAT_TO_DUTY_CYCLE_FACTOR); 
 
   ESP_ERROR_CHECK(ledc_set_duty(LEDC_MODE, LEDC_CHANNEL, duty_cycle));

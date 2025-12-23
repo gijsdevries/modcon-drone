@@ -16,6 +16,9 @@
 
 uint8_t desired_distance;
 uint8_t actual_distance;
+uint8_t pwm;
+
+#define DEBUG
 
 extern "C" {void app_main(void) {
   esp_now_full_init();
@@ -29,8 +32,26 @@ extern "C" {void app_main(void) {
 
   pwm_init();
 
+  int i = 0;
+
   while (1) {
-    printf("desired distance: %d    actual distance: %d\n", desired_distance, (uint8_t)hc_sr04_measure_cm(sensor));
-    vTaskDelay(500 / portTICK_PERIOD_MS);
+
+    if (desired_distance < actual_distance) {
+      pwm++;
+    }
+    else {
+      pwm--;
+    }
+    setPWM(pwm);
+
+#ifdef DEBUG
+    i++;
+    if (i > 50) {
+      printf("desired distance: %d    actual distance: %d\n", desired_distance, (uint8_t)hc_sr04_measure_cm(sensor));
+      i = 0;
+    } 
+#endif
+
+    vTaskDelay(50 / portTICK_PERIOD_MS);
   }
 }}
