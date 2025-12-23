@@ -10,32 +10,7 @@
 
 /* USER INCLUDES */
 #include "i2c.h"
-
-#define ESPNOW_WIFI_MODE WIFI_MODE_STA
-#define ESPNOW_WIFI_IF   WIFI_IF_STA
-
-typedef struct struct_message {
-  int distance;
-} struct_message;
-
-struct_message myData;
-
-static void example_wifi_init(void)
-{
-    ESP_ERROR_CHECK(esp_netif_init());
-    ESP_ERROR_CHECK(esp_event_loop_create_default());
-    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
-    ESP_ERROR_CHECK( esp_wifi_init(&cfg) );
-    ESP_ERROR_CHECK( esp_wifi_set_storage(WIFI_STORAGE_RAM) );
-    ESP_ERROR_CHECK( esp_wifi_set_mode(ESPNOW_WIFI_MODE) );
-    ESP_ERROR_CHECK( esp_wifi_start());
-}
-
-// callback function that will be executed when data is received
-void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
-  memcpy(&myData, incomingData, sizeof(myData));
-  printf("recieved distance = %d\n", myData.distance);
-}
+#include "espnow_rec.h"
 
 extern "C" {void app_main(void) {
   i2c_master_init();
@@ -56,11 +31,4 @@ extern "C" {void app_main(void) {
   gpio_reset_pin((gpio_num_t)2);
   gpio_set_direction((gpio_num_t)2, GPIO_MODE_OUTPUT);
 
-  while(1) {
-    if (myData.distance == 14) {
-      gpio_set_level((gpio_num_t)2, 1);
-      vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay 1 second
-      gpio_set_level((gpio_num_t)2, 0);
-    }
-  }
 }}

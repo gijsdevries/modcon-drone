@@ -1,5 +1,17 @@
 #include "espnow_rec.h"
 
+typedef struct struct_message {
+  int distance;
+} struct_message;
+
+struct_message myData;
+
+// callback function that will be executed when data is received
+void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
+  memcpy(&myData, incomingData, sizeof(myData));
+  printf("recieved distance = %d\n", myData.distance);
+}
+
 void example_wifi_init(void) {
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
