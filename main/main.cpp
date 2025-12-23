@@ -148,6 +148,7 @@ extern "C" {void app_main(void)
 
     while (1) {
 
+      myData.distance = 15;
       esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
       if (result == ESP_OK) {
         printf("Distance send succes: %f    ", myData.distance);
