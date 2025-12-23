@@ -10,9 +10,9 @@
 #define ESPNOW_WIFI_MODE WIFI_MODE_STA
 #define ESPNOW_WIFI_IF   WIFI_IF_STA
 
-typedef struct struct_message {
+typedef struct distance_struct {
   int distance;
-} struct_message;
+} distance_struct;
 
 extern uint8_t desired_distance;
 

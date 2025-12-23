@@ -1,12 +1,9 @@
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include <esp_now.h>
 #include "driver/gpio.h"
 #include "sdkconfig.h"
 #include "esp_log.h"
-#include "esp_wifi.h"
-#include "nvs_flash.h"
 #include "hc_sr04.h"
 
 /* USER INCLUDES */
