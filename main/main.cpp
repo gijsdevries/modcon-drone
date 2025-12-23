@@ -68,10 +68,14 @@ void uart_init(void) {
 }
 
 static void rx_task(void *arg) {
+  char char_distance;
   char* data = (char*) malloc(RX_BUF_SIZE + 1);
   while (1) {
     const int rxBytes = uart_read_bytes(UART_NUM_1, data, RX_BUF_SIZE, 1000 / portTICK_PERIOD_MS);
     if (rxBytes > 0) {
+      char_distance = atoi(data);
+
+      distance = (float)char_distance;
       snprintf(data, rxBytes, "%.2f", distance);
 
       if (distance >= 10 && distance <= 200) {
