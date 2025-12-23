@@ -21,8 +21,10 @@
 uint8_t broadcastAddress[] = {0x80, 0xF3, 0xDA, 0x55, 0x9B, 0x00};
 
 typedef struct struct_message {
-  int distance;
+  float distance;
 } struct_message;
+
+float distance;
 
 // Create a struct_message called myData
 struct_message myData;
@@ -70,7 +72,7 @@ static void rx_task(void *arg) {
   while (1) {
     const int rxBytes = uart_read_bytes(UART_NUM_1, data, RX_BUF_SIZE, 1000 / portTICK_PERIOD_MS);
     if (rxBytes > 0) {
-      int distance = atoi(data);
+      snprintf(data, rxBytes, "%.2f", distance);
 
       if (distance >= 10 && distance <= 200) {
         //valid arg
@@ -80,17 +82,17 @@ static void rx_task(void *arg) {
         // Send message via ESP-NOW
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
         if (result == ESP_OK) {
-          printf("Distance send succes: %d    ", myData.distance);
+          printf("Distance send succes: %f    ", myData.distance);
         }
         else {
-          printf("Unknown error. Distance was valid: %d\n", myData.distance);
+          printf("Unknown error. Distance was valid: %f\n", myData.distance);
         }
 
         vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay 1 second
         gpio_set_level((gpio_num_t)2, 0);
       }
       else {
-        printf("Invalid height: %d. Not sending ESPNOW\n", distance);
+        printf("Invalid height: %f. Not sending ESPNOW\n", distance);
         for (char i=0; i < 10; i++) {
           gpio_set_level((gpio_num_t)2, 1);
           vTaskDelay(50 / portTICK_PERIOD_MS); // Delay 1 second
@@ -134,22 +136,20 @@ extern "C" {void app_main(void)
       return;
     }
 
-    //    uart_init();
-    //    xTaskCreate(rx_task, "uart_rx_task", 4096, NULL, configMAX_PRIORITIES - 1, NULL);
+    uart_init();
+    xTaskCreate(rx_task, "uart_rx_task", 4096, NULL, configMAX_PRIORITIES - 1, NULL);
 
     gpio_reset_pin((gpio_num_t)2);
     gpio_set_direction((gpio_num_t)2, GPIO_MODE_OUTPUT);
 
     while (1) {
 
-      myData.distance = 14;
-
       esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
       if (result == ESP_OK) {
-        printf("Distance send succes: %d    ", myData.distance);
+        printf("Distance send succes: %f    ", myData.distance);
       }
       else {
-        printf("Unknown error. Distance was valid: %d\n", myData.distance);
+        printf("Unknown error. Distance was valid: %f\n", myData.distance);
       }
 
       vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay 1 second
