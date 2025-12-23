@@ -45,16 +45,17 @@ extern "C" {void app_main(void) {
     error_sum += error * dT;
     error_div = (error - error_prev) / dT;
     pwm = error*KP + error_sum*KI + error_div*KD;
-    setPWM(pwm);
     error_prev = error;
 
-    vTaskDelay(10 / portTICK_PERIOD_MS);
+    setPWM(pwm);
+
+    vTaskDelay((1000*dT) / portTICK_PERIOD_MS);
 
 #ifdef DEBUG
     static int i = 0;
     i++;
     if (i > 250) {
-      printf("error: %f   error_sum: %f   error_div: %f   error_prev: %f    desired_distance: %f    actual_distance: %f   pwm: %f", 
+      printf("--- Measurements ---\nerror: %f   error_sum: %f   error_div: %f   error_prev: %f    desired_distance: %f    actual_distance: %f   pwm: %f\n\n\n", 
       error, error_sum, error_div, error_prev, desired_distance, actual_distance, pwm);
       i = 0;
     } 
