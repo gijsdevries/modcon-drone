@@ -16,7 +16,6 @@ typedef struct struct_message {
 
 extern uint8_t desired_distance;
 
-void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len);
-void example_wifi_init(void);
+void esp_now_full_init();
 
 #endif
