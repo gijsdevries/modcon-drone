@@ -10,6 +10,12 @@
 #define ESPNOW_WIFI_MODE WIFI_MODE_STA
 #define ESPNOW_WIFI_IF   WIFI_IF_STA
 
+typedef struct struct_message {
+  int distance;
+} struct_message;
+
+extern uint8_t desired_distance;
+
 void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len);
 void example_wifi_init(void);
 
