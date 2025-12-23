@@ -15,11 +15,11 @@
 #define ESPNOW_WIFI_MODE WIFI_MODE_STA
 #define ESPNOW_WIFI_IF   WIFI_IF_STA
 
+/// ------------------------------ ESPNOW ------------------------------ /// 
+
 // REPLACE WITH YOUR RECEIVER MAC Address
 uint8_t broadcastAddress[] = {0x80, 0xF3, 0xDA, 0x55, 0x9B, 0x00};
 
-// Structure example to send data
-// Must match the receiver structure
 typedef struct struct_message {
   int distance;
 } struct_message;
@@ -31,7 +31,6 @@ esp_now_peer_info_t peerInfo;
 
 // callback when data is sent
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
-  printf("\r\nLast Packet Send Status:\t");
   printf(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success\n" : "Delivery Fail\n");
 }
 
@@ -44,22 +43,76 @@ static void example_wifi_init(void)
     ESP_ERROR_CHECK( esp_wifi_set_storage(WIFI_STORAGE_RAM) );
     ESP_ERROR_CHECK( esp_wifi_set_mode(ESPNOW_WIFI_MODE) );
     ESP_ERROR_CHECK( esp_wifi_start());
-//    ESP_ERROR_CHECK( esp_wifi_set_channel(CONFIG_ESPNOW_CHANNEL, WIFI_SECOND_CHAN_NONE));
+}
+
+/// ------------------------------ UART ------------------------------ /// 
+
+static const int RX_BUF_SIZE = 1024;
+#define RXD_PIN (gpio_num_t)3
+
+void uart_init(void) {
+    const uart_config_t uart_config = {
+        .baud_rate = 115200,
+        .data_bits = UART_DATA_8_BITS,
+        .parity = UART_PARITY_DISABLE,
+        .stop_bits = UART_STOP_BITS_1,
+        .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
+        .source_clk = UART_SCLK_DEFAULT,
+    };
+    // We won't use a buffer for sending data.
+    uart_driver_install(UART_NUM_1, RX_BUF_SIZE * 2, 0, 0, NULL, 0);
+    uart_param_config(UART_NUM_1, &uart_config);
+    uart_set_pin(UART_NUM_1, -1, RXD_PIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+}
+
+static void rx_task(void *arg) {
+  char* data = (char*) malloc(RX_BUF_SIZE + 1);
+  while (1) {
+    const int rxBytes = uart_read_bytes(UART_NUM_1, data, RX_BUF_SIZE, 1000 / portTICK_PERIOD_MS);
+    if (rxBytes > 0) {
+      int distance = atoi(data);
+
+      if (distance >= 10 && distance <= 200) {
+        //valid arg
+        gpio_set_level((gpio_num_t)2, 1);
+        myData.distance = distance;
+
+        // Send message via ESP-NOW
+        esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
+        if (result == ESP_OK) {
+          printf("Distance send succes: %d    ", myData.distance);
+        }
+        else {
+          printf("Unknown error. Distance was valid: %d\n", myData.distance);
+        }
+
+        vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay 1 second
+        gpio_set_level((gpio_num_t)2, 0);
+      }
+      else {
+        printf("Invalid height: %d. Not sending ESPNOW\n", distance);
+        for (char i=0; i < 10; i++) {
+          gpio_set_level((gpio_num_t)2, 1);
+          vTaskDelay(50 / portTICK_PERIOD_MS); // Delay 1 second
+          gpio_set_level((gpio_num_t)2, 0);
+          vTaskDelay(50 / portTICK_PERIOD_MS); // Delay 1 second
+        }
+      }
+      data[rxBytes] = 0;
+    }
+  }
+  free(data);
 }
 
 extern "C" {void app_main(void)
   {
     uint8_t mac_addr[6]; // Buffer for the MAC address
 
-    gpio_reset_pin((gpio_num_t)2);
-    gpio_set_direction((gpio_num_t)2, GPIO_MODE_OUTPUT);
-
-
     // Initialize NVS
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
-        ESP_ERROR_CHECK( nvs_flash_erase() );
-        ret = nvs_flash_init();
+      ESP_ERROR_CHECK( nvs_flash_erase() );
+      ret = nvs_flash_init();
     }
     ESP_ERROR_CHECK( ret );
 
@@ -81,18 +134,24 @@ extern "C" {void app_main(void)
       return;
     }
 
+    //    uart_init();
+    //    xTaskCreate(rx_task, "uart_rx_task", 4096, NULL, configMAX_PRIORITIES - 1, NULL);
+
+    gpio_reset_pin((gpio_num_t)2);
+    gpio_set_direction((gpio_num_t)2, GPIO_MODE_OUTPUT);
+
     while (1) {
-      myData.distance = 100;
 
-      // Send message via ESP-NOW
+      myData.distance = 14;
+
       esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
-
       if (result == ESP_OK) {
-        printf("Sent with success");
+        printf("Distance send succes: %d    ", myData.distance);
       }
       else {
-        printf("Error sending the data");
+        printf("Unknown error. Distance was valid: %d\n", myData.distance);
       }
-      vTaskDelay(2000 / portTICK_PERIOD_MS);
+
+      vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay 1 second
     }
   }}
