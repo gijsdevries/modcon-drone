@@ -12,7 +12,7 @@
 #include "pwm.h"
 
 //TODO calibrate these values
-#define KP 0.1
+#define KP 1
 #define KI 0.1
 #define KD 0.1
 #define dT 0.01
@@ -23,7 +23,8 @@
 float error, error_sum, error_div, error_prev, desired_distance, actual_distance, pwm;
 
 extern "C" {void app_main(void) {
-  esp_now_full_init();
+  desired_distance = 150;
+  //  esp_now_full_init();
 
   hc_sr04_config_t config = {
     .trigger_pin = GPIO_NUM_4,
@@ -44,7 +45,7 @@ extern "C" {void app_main(void) {
     actual_distance = hc_sr04_measure_cm(sensor); 
     error_sum += error * dT;
     error_div = (error - error_prev) / dT;
-    pwm = error*KP + error_sum*KI + error_div*KD;
+    pwm = error*KP;
     error_prev = error;
 
     setPWM(pwm);
