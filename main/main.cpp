@@ -30,7 +30,7 @@ extern "C" {void app_main(void) {
   pwm_init();
 
   while (1) {
-    printf("desired distance: %d    actual distance: %f\n", desired_distance, hc_sr04_measure_cm(sensor));
+    printf("desired distance: %d    actual distance: %d\n", desired_distance, (uint8_t)hc_sr04_measure_cm(sensor));
     vTaskDelay(500 / portTICK_PERIOD_MS);
   }
 }}
