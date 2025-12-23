@@ -1,0 +1,6 @@
+dependencies:
+  idf: '>=5.0'
+description: HC-SR04 Ultrasonic Sensor Driver
+repository: https://github.com/phlangone/hc-sr04-esp-idf
+url: https://components-staging.espressif.com/components/phlangone/hc_sr04/versions/1.0.0/readme?language=en
+version: 1.1.1
