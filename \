@@ -14,6 +14,7 @@
 
 
 extern "C" {void app_main(void) {
+
   hc_sr04_config_t config = {
     .trigger_pin = GPIO_NUM_4,
     .echo_pin = GPIO_NUM_5,
@@ -25,6 +26,6 @@ extern "C" {void app_main(void) {
   while(1) {
     float distance = hc_sr04_measure_cm(sensor);
     printf("distance: %f\n", distance);
-    vTaskDelay(500 / portTICK_PERIOD_MS);
+    vTaskDelay(500 / portTick_PERIOD_MS);
   }
 }}
