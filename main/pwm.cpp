@@ -1,17 +1,16 @@
 #include "pwm.h"
 
-#define FIVE_PER_DUTY_CYCLE (8192 * 0.05)
-#define CHAR_TO_DUTY_CYCLE_FACTOR 1.59
+#define TEN_PERCENT_DUTY_CYCLE (8192 * 0.10)
+#define FLOAT_TO_DUTY_CYCLE_FACTOR 1.59
 
-/* set 0 for 5% duty cycle, 255 for 10% duty cycle */
-void setPWM(uint8_t motorspeed) {
-  uint16_t duty_cycle = FIVE_PER_DUTY_CYCLE + (motorspeed * 1.59); 
+void setPWM(float motorspeed) {
+  uint16_t duty_cycle = TEN_PERCENT_DUTY_CYCLE - (motorspeed * FLOAT_TO_DUTY_CYCLE_FACTOR); 
 
   ESP_ERROR_CHECK(ledc_set_duty(LEDC_MODE, LEDC_CHANNEL, duty_cycle));
   ESP_ERROR_CHECK(ledc_update_duty(LEDC_MODE, LEDC_CHANNEL));
 }
 
-void example_ledc_init(void)
+void pwm_init(void)
 {
     ledc_timer_config_t ledc_timer = {
         .speed_mode       = LEDC_MODE,

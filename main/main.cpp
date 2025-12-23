@@ -13,7 +13,6 @@
 #include "hc_sr04.h"
 #include "pwm.h"
 
-
 extern "C" {void app_main(void) {
   hc_sr04_config_t config = {
     .trigger_pin = GPIO_NUM_4,
@@ -22,26 +21,12 @@ extern "C" {void app_main(void) {
   };
   hc_sr04_handle_t sensor = hc_sr04_init(&config);
 
-//  example_ledc_init();
+  pwm_init();
 
   while(1) {
     float distance = hc_sr04_measure_cm(sensor);
-//    setPWM(distance);
+    setPWM(distance);
     printf("distance: %f\n", distance);
     vTaskDelay(500 / portTICK_PERIOD_MS);
   }
 }}
-
-
-/*
-extern "C" {void app_main(void) {
-  i2c_master_init();
-  i2c_write(SYSTEM__INTERRUPT_CONFIG_GPIO); 
-  example_ledc_init();
-
-  while(1) {
-    uint8_t distance = i2c_distance(); 
-    setPWM(distance);
-    printf("distance: %d\n", distance);
-    vTaskDelay(100 / portTICK_PERIOD_MS); 
-  */
