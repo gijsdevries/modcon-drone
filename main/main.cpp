@@ -12,11 +12,9 @@
 #include "pwm.h"
 
 #define BUILTIN_LED (gpio_num_t)2
-#define DEBUG
+//#define DEBUG
 
-uint8_t desired_distance;
-uint8_t actual_distance;
-uint8_t pwm;
+float desired_distance, actual_distance, pwm;
 
 extern "C" {void app_main(void) {
   esp_now_full_init();
@@ -34,7 +32,7 @@ extern "C" {void app_main(void) {
   gpio_set_direction(BUILTIN_LED, GPIO_MODE_OUTPUT);
 
   while (1) {
-    actual_distance = (uint8_t)hc_sr04_measure_cm(sensor); 
+    actual_distance = hc_sr04_measure_cm(sensor); 
 
     if (desired_distance < actual_distance && pwm > 1) {
       pwm--;

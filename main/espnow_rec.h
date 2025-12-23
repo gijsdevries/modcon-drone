@@ -11,10 +11,10 @@
 #define ESPNOW_WIFI_IF   WIFI_IF_STA
 
 typedef struct distance_struct {
-  int distance;
+  float distance;
 } distance_struct;
 
-extern uint8_t desired_distance;
+extern float desired_distance;
 
 void esp_now_full_init();
 
