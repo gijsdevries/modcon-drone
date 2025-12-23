@@ -29,7 +29,6 @@ static void example_wifi_init(void)
     ESP_ERROR_CHECK( esp_wifi_set_storage(WIFI_STORAGE_RAM) );
     ESP_ERROR_CHECK( esp_wifi_set_mode(ESPNOW_WIFI_MODE) );
     ESP_ERROR_CHECK( esp_wifi_start());
-//    ESP_ERROR_CHECK( esp_wifi_set_channel(CONFIG_ESPNOW_CHANNEL, WIFI_SECOND_CHAN_NONE));
 }
 
 // callback function that will be executed when data is received
@@ -54,13 +53,10 @@ extern "C" {void app_main(void) {
 
   esp_now_register_recv_cb(esp_now_recv_cb_t(OnDataRecv));
 
-    gpio_reset_pin((gpio_num_t)2);
-    gpio_set_direction((gpio_num_t)2, GPIO_MODE_OUTPUT);
+  gpio_reset_pin((gpio_num_t)2);
+  gpio_set_direction((gpio_num_t)2, GPIO_MODE_OUTPUT);
 
   while(1) {
-    //    uint8_t distance = i2c_distance(); //push in mai?
-    //    printf("distance: %d\n", distance);
-    // printf("desired distance: %d\n", myData.distance);
     if (myData.distance == 14) {
       gpio_set_level((gpio_num_t)2, 1);
       vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay 1 second
