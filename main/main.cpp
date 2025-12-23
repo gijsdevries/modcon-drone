@@ -54,11 +54,17 @@ extern "C" {void app_main(void) {
 
   esp_now_register_recv_cb(esp_now_recv_cb_t(OnDataRecv));
 
+    gpio_reset_pin((gpio_num_t)2);
+    gpio_set_direction((gpio_num_t)2, GPIO_MODE_OUTPUT);
 
   while(1) {
     //    uint8_t distance = i2c_distance(); //push in mai?
     //    printf("distance: %d\n", distance);
-    printf("hello world\n");
-    vTaskDelay(1000 / portTICK_PERIOD_MS); 
+    // printf("desired distance: %d\n", myData.distance);
+    if (myData.distance == 14) {
+      gpio_set_level((gpio_num_t)2, 1);
+      vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay 1 second
+      gpio_set_level((gpio_num_t)2, 0);
+    }
   }
 }}
