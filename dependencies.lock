@@ -1,0 +1,17 @@
+dependencies:
+  hc_sr04:
+    dependencies: []
+    source:
+      path: /home/gijs/Documents/espidfProjects/modcon/components/hc_sr04
+      type: local
+    version: 1.1.1
+  idf:
+    source:
+      type: idf
+    version: 5.5.1
+direct_dependencies:
+- idf
+- phlangone/hc_sr04
+manifest_hash: 06cdd22f70ba03a4d41d055e3549cd444018851dc64b2ebbda0edeb16fc88941
+target: esp32
+version: 2.0.0
