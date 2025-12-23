@@ -10,23 +10,15 @@
 
 /* USER INCLUDES */
 #include "i2c.h"
-#include "hc_sr04.h"
-#include "pwm.h"
+#include "espnow_rec.h"
+
+uint8_t desired_distance;
 
 extern "C" {void app_main(void) {
-  hc_sr04_config_t config = {
-    .trigger_pin = GPIO_NUM_4,
-    .echo_pin = GPIO_NUM_5,
-    .timeout_us = 30000
-  };
-  hc_sr04_handle_t sensor = hc_sr04_init(&config);
+  esp_now_full_init();
 
-  pwm_init();
-
-  while(1) {
-    float distance = hc_sr04_measure_cm(sensor);
-    setPWM(distance);
-    printf("distance: %f\n", distance);
+  while (1) {
+    printf("desired distance: %d\n", desired_distance);
     vTaskDelay(500 / portTICK_PERIOD_MS);
   }
 }}
