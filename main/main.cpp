@@ -32,22 +32,22 @@ extern "C" {void app_main(void) {
 
   pwm_init();
 
-  int i = 0;
-
   while (1) {
+    actual_distance = (uint8_t)hc_sr04_measure_cm(sensor); 
 
-    if (desired_distance < actual_distance) {
-      pwm++;
-    }
-    else {
+    if (desired_distance < actual_distance && pwm > 1) {
       pwm--;
+    }
+    else if (desired_distance > actual_distance && pwm < 255) {
+      pwm++;
     }
     setPWM(pwm);
 
 #ifdef DEBUG
+    static int i = 0;
     i++;
     if (i > 50) {
-      printf("desired distance: %d    actual distance: %d\n", desired_distance, (uint8_t)hc_sr04_measure_cm(sensor));
+      printf("desired distance: %d    actual distance: %d   pwm: %d\n", desired_distance, actual_distance, pwm);
       i = 0;
     } 
 #endif
