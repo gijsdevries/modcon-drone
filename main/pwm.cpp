@@ -4,11 +4,6 @@
 #define CHAR_TO_DUTY_CYCLE_FACTOR 1.59
 
 void setPWM(float motorspeed) {
-  if (motorspeed > 255)
-    motorspeed = 255;
-  else if (motorspeed < 0)
-    motorspeed = 0;
-
   uint16_t duty_cycle = FIVE_PERCENT_DUTY_CYCLE + ((uint8_t)motorspeed * CHAR_TO_DUTY_CYCLE_FACTOR); 
 
   ESP_ERROR_CHECK(ledc_set_duty(LEDC_MODE, LEDC_CHANNEL, duty_cycle));

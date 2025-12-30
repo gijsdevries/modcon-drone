@@ -12,18 +12,20 @@
 #include "pwm.h"
 
 //TODO calibrate these values
-#define KP 1
-#define KI 0.1
-#define KD 0.1
+#define KP 0.08
+#define KI 0.8
+#define KD 1.3 
+
 #define dT 0.01
 
 #define BUILTIN_LED (gpio_num_t)2
 #define DEBUG
 
-float error, error_sum, error_div, error_prev, desired_distance, actual_distance, pwm;
+float error, error_sum, error_div, error_prev, desired_distance, actual_distance, pwm, output;
 
 extern "C" {void app_main(void) {
-  desired_distance = 150;
+  desired_distance = 1.5;
+  pwm = 128;
   //  esp_now_full_init();
 
   hc_sr04_config_t config = {
@@ -39,14 +41,19 @@ extern "C" {void app_main(void) {
   gpio_set_direction(BUILTIN_LED, GPIO_MODE_OUTPUT);
 
   while (1) {
-    actual_distance = hc_sr04_measure_cm(sensor); 
-
+    actual_distance = hc_sr04_measure_cm(sensor) / 100; 
     error = desired_distance - actual_distance;
-    actual_distance = hc_sr04_measure_cm(sensor); 
     error_sum += error * dT;
     error_div = (error - error_prev) / dT;
-    pwm = error*KP;
+    output = error*KP + error*KI + error*KD;
     error_prev = error;
+
+    pwm *= output;
+
+    if (pwm > 255)
+      pwm = 255;
+    else if (pwm < 1)
+      pwm = 1;
 
     setPWM(pwm);
 
@@ -56,8 +63,8 @@ extern "C" {void app_main(void) {
     static int i = 0;
     i++;
     if (i > 250) {
-      printf("--- Measurements ---\nerror: %f   error_sum: %f   error_div: %f   error_prev: %f    desired_distance: %f    actual_distance: %f   pwm: %f\n\n\n", 
-      error, error_sum, error_div, error_prev, desired_distance, actual_distance, pwm);
+      printf("--- Measurements ---\nerror: %f   error_sum: %f   error_div: %f   error_prev: %f    desired_distance: %f    actual_distance: %f   pwm: %f   output: %f\n\n\n", 
+          error, error_sum, error_div, error_prev, desired_distance, actual_distance, pwm, output);
       i = 0;
     } 
 #endif
