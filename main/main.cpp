@@ -19,7 +19,7 @@
 #define dT 0.01
 
 #define BUILTIN_LED (gpio_num_t)2
-#define DEBUG
+//#define DEBUG
 
 float error, error_sum, error_div, error_prev, desired_distance, actual_distance, pwm, output;
 
