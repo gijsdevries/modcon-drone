@@ -11,7 +11,6 @@
 #include "espnow_rec.h"
 #include "pwm.h"
 
-//TODO calibrate these values
 #define KP 0.08
 #define KI 0.8
 #define KD 1.3 
@@ -19,14 +18,14 @@
 #define dT 0.01
 
 #define BUILTIN_LED (gpio_num_t)2
-//#define DEBUG
+#define DEBUG
 
 float error, error_sum, error_div, error_prev, desired_distance, actual_distance, pwm, output;
 
 extern "C" {void app_main(void) {
   desired_distance = 1.5;
   pwm = 128;
-  //  esp_now_full_init();
+  esp_now_full_init();
 
   hc_sr04_config_t config = {
     .trigger_pin = GPIO_NUM_4,
@@ -39,6 +38,9 @@ extern "C" {void app_main(void) {
 
   gpio_reset_pin(BUILTIN_LED);
   gpio_set_direction(BUILTIN_LED, GPIO_MODE_OUTPUT);
+
+  setPWM(0);
+  vTaskDelay(3000 / portTICK_PERIOD_MS);
 
   while (1) {
     actual_distance = hc_sr04_measure_cm(sensor) / 100; 
