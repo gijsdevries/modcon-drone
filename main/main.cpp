@@ -21,9 +21,12 @@
 #define DEBUG
 
 float error, error_sum, error_div, error_prev, desired_distance, actual_distance, pwm, output;
+bool operation_state;
 
 extern "C" {void app_main(void) {
   desired_distance = 1.5;
+  operation_state = true;
+
   pwm = 128;
   esp_now_full_init();
 
@@ -43,32 +46,39 @@ extern "C" {void app_main(void) {
   vTaskDelay(3000 / portTICK_PERIOD_MS);
 
   while (1) {
-    actual_distance = hc_sr04_measure_cm(sensor) / 100; 
-    error = desired_distance - actual_distance;
-    error_sum += error * dT;
-    error_div = (error - error_prev) / dT;
-    output = error*KP + error*KI + error*KD;
-    error_prev = error;
+    if (operation_state == false) {
+      setPWM(0);
+      vTaskDelay(1000 / portTICK_PERIOD_MS);
+    }
+    else {
+      actual_distance = hc_sr04_measure_cm(sensor) / 100; 
+      error = desired_distance - actual_distance;
+      error_sum += error * dT;
+      error_div = (error - error_prev) / dT;
+      output = error*KP + error*KI + error*KD;
+      error_prev = error;
 
-    pwm *= output;
+      pwm *= output;
 
-    if (pwm > 255)
-      pwm = 255;
-    else if (pwm < 1)
-      pwm = 1;
+      if (pwm > 255)
+        pwm = 255;
+      else if (pwm < 1)
+        pwm = 1;
 
-    setPWM(pwm);
+      setPWM(pwm);
 
-    vTaskDelay((1000*dT) / portTICK_PERIOD_MS);
+      vTaskDelay((1000*dT) / portTICK_PERIOD_MS);
 
 #ifdef DEBUG
-    static int i = 0;
-    i++;
-    if (i > 250) {
-      printf("--- Measurements ---\nerror: %f   error_sum: %f   error_div: %f   error_prev: %f    desired_distance: %f    actual_distance: %f   pwm: %f   output: %f\n\n\n", 
-          error, error_sum, error_div, error_prev, desired_distance, actual_distance, pwm, output);
-      i = 0;
-    } 
+      static int i = 0;
+      i++;
+      if (i > 250) {
+        printf("--- Measurements ---\nerror: %f   error_sum: %f   error_div: %f   error_prev: %f    desired_distance: %f    actual_distance: %f   pwm: %f   output: %f\n\n\n", 
+            error, error_sum, error_div, error_prev, desired_distance, actual_distance, pwm, output);
+        i = 0;
+      } 
 #endif
+
+    }
   }
 }}

@@ -2,19 +2,37 @@
 
 // callback function that will be executed when data is received
 void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
-  static distance_struct recDistance;
-  memcpy(&recDistance, incomingData, sizeof(recDistance));
-  desired_distance = recDistance.distance;
+
+  //add peer
+
+  uint8_t msg_type = incomingData[0];
+  
+  switch (msg_type) {
+    case DISTANCE:
+      static distance_struct recDistance;
+      memcpy(&recDistance, incomingData, sizeof(recDistance));
+      desired_distance = recDistance.distance;
+      break;
+
+    case OPERATION:
+      static operation_struct recOp;
+      memcpy(&recOp, incomingData, sizeof(recOp));
+      operation_state = recOp.operation_state;
+      break;
+
+    default:
+      break;
+  }
 }
 
 void example_wifi_init(void) {
-    ESP_ERROR_CHECK(esp_netif_init());
-    ESP_ERROR_CHECK(esp_event_loop_create_default());
-    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
-    ESP_ERROR_CHECK( esp_wifi_init(&cfg) );
-    ESP_ERROR_CHECK( esp_wifi_set_storage(WIFI_STORAGE_RAM) );
-    ESP_ERROR_CHECK( esp_wifi_set_mode(ESPNOW_WIFI_MODE) );
-    ESP_ERROR_CHECK( esp_wifi_start());
+  ESP_ERROR_CHECK(esp_netif_init());
+  ESP_ERROR_CHECK(esp_event_loop_create_default());
+  wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+  ESP_ERROR_CHECK( esp_wifi_init(&cfg) );
+  ESP_ERROR_CHECK( esp_wifi_set_storage(WIFI_STORAGE_RAM) );
+  ESP_ERROR_CHECK( esp_wifi_set_mode(ESPNOW_WIFI_MODE) );
+  ESP_ERROR_CHECK( esp_wifi_start());
 }
 
 void esp_now_full_init() {
