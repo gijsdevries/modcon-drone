@@ -151,7 +151,7 @@ static void button_monitor(void *arg) {
         printf("operation state send fail: %d ", myOpState.operation_state);
       }
     }
-    vTaskDelay(200 / portTICK_PERIOD_MS); // Delay 200ms
+    vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay 200ms
   }
 }
 
