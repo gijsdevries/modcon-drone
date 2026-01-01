@@ -41,7 +41,7 @@ typedef struct pid_struct {
 
 extern float desired_distance;
 extern bool operation_state;
-extern uint8_t broadcastAddress[6];
+extern uint8_t broadcastAddress[];
 
 void esp_now_full_init();
 

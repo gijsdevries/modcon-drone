@@ -1,7 +1,9 @@
 #include "espnow_rec.h"
 
 esp_now_peer_info_t peerInfo;
-uint8_t broadcastAddress[6];
+
+// Broadcast MAC Address TODO
+uint8_t broadcastAddress[] = {0x80, 0xF3, 0xDA, 0x55, 0x9B, 0x00};
 
 // callback function that will be executed when data is received
 void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
@@ -42,6 +44,7 @@ void example_wifi_init(void) {
 }
 
 void esp_now_full_init() {
+  
   // Initialize NVS
   esp_err_t ret = nvs_flash_init();
   if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
