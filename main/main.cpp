@@ -75,6 +75,32 @@ void uart_init(void) {
 }
 
 static void button_monitor(void *arg) {
+
+  gpio_num_t BUTTON_PIN = (gpio_num_t)4;
+
+  // Configure GPIO
+  gpio_config_t io_conf = {
+    .pin_bit_mask = (1ULL << BUTTON_PIN),   // Select GPIO 4
+    .mode = GPIO_MODE_INPUT,                // Set as input
+    .pull_up_en = GPIO_PULLUP_DISABLE,       // Enable internal pull-up
+    .pull_down_en = GPIO_PULLDOWN_ENABLE,  // Disable pull-down
+    .intr_type = GPIO_INTR_DISABLE          // Disable interrupts
+  };
+  gpio_config(&io_conf);
+
+  while (1) {
+    // Read GPIO level (current state)
+    int level = gpio_get_level(BUTTON_PIN);
+
+    if (level == 1) {
+      gpio_set_level((gpio_num_t)2, 1);
+      vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay 1 second
+      gpio_set_level((gpio_num_t)2, 0);
+    }
+
+    vTaskDelay(200 / portTICK_PERIOD_MS); // Delay 200ms
+  }
+
   while (1) {
     gpio_set_level((gpio_num_t)2, 0);
     vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay 1 second
