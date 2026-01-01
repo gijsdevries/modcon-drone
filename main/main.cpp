@@ -23,6 +23,7 @@ uint8_t broadcastAddress[] = {0x80, 0xF3, 0xDA, 0x55, 0x9B, 0x00};
 enum MSG_TYPE {
   DISTANCE,
   OPERATION,
+  PID_DRONE,
 };
 
 typedef struct operation_struct {
@@ -30,17 +31,28 @@ typedef struct operation_struct {
   bool operation_state;
 } operation_struct;
 
-operation_struct myOpState;
-
 typedef struct struct_message {
   int msg_type;
   float distance;
 } struct_message;
 
+typedef struct pid_struct {
+  uint8_t msg_type;
+  float error; 
+  float error_sum;
+  float error_div;
+  float error_prev;
+  float desired_distance;
+  float actual_distance;
+  float pwm;
+  float output;
+
+} pid_struct;
+
 float distance;
 
 struct_message myData;
-
+operation_struct myOpState;
 esp_now_peer_info_t peerInfo;
 
 // callback when data is sent
