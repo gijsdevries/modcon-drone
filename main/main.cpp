@@ -94,32 +94,20 @@ static void rx_task(void *arg) {
       distance = (float)char_distance;
       snprintf(data, rxBytes, "%.2f", distance);
 
-      if (distance >= 10 && distance <= 200) {
-        //valid arg
-        gpio_set_level((gpio_num_t)2, 1);
-        myData.distance = distance;
+      gpio_set_level((gpio_num_t)2, 1);
+      myData.distance = distance;
 
-        // Send message via ESP-NOW
-        esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
-        if (result == ESP_OK) {
-          printf("Distance send succes: %f    ", myData.distance);
-        }
-        else {
-          printf("Unknown error. Distance was valid: %f\n", myData.distance);
-        }
-
-        vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay 1 second
-        gpio_set_level((gpio_num_t)2, 0);
+      // Send message via ESP-NOW
+      esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
+      if (result == ESP_OK) {
+        printf("Distance send succes: %f    ", myData.distance);
       }
       else {
-        printf("Invalid height: %f. Not sending ESPNOW\n", distance);
-        for (char i=0; i < 10; i++) {
-          gpio_set_level((gpio_num_t)2, 1);
-          vTaskDelay(50 / portTICK_PERIOD_MS); // Delay 1 second
-          gpio_set_level((gpio_num_t)2, 0);
-          vTaskDelay(50 / portTICK_PERIOD_MS); // Delay 1 second
-        }
+        printf("Unknown error. Distance was valid: %f\n", myData.distance);
       }
+
+      vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay 1 second
+      gpio_set_level((gpio_num_t)2, 0);
       data[rxBytes] = 0;
     }
   }
