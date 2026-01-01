@@ -3,7 +3,7 @@
 esp_now_peer_info_t peerInfo;
 
 // Broadcast MAC Address TODO
-uint8_t broadcastAddress[] = {0x80, 0xF3, 0xDA, 0x55, 0x9B, 0x00};
+uint8_t broadcastAddress[] = {0x80, 0xF3, 0xDA, 0x54, 0x18, 0x38};
 
 // callback function that will be executed when data is received
 void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
