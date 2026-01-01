@@ -127,8 +127,6 @@ static void rx_task(void *arg) {
       distance = (float)char_distance;
       snprintf(data, rxBytes, "%.2f", distance);
 
-      gpio_set_level((gpio_num_t)2, 1);
-
       myData.distance = distance;
 
       // Send message via ESP-NOW
@@ -140,8 +138,6 @@ static void rx_task(void *arg) {
         printf("Unknown error. Distance was valid: %f\n", myData.distance);
       }
 
-      vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay 1 second
-      gpio_set_level((gpio_num_t)2, 0);
       data[rxBytes] = 0;
     }
   }
