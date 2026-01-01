@@ -60,6 +60,33 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   printf(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success\n" : "Delivery Fail\n");
 }
 
+// callback function that will be executed when data is received
+void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
+  static esp_now_peer_info_t peerInfo;
+
+  uint8_t msg_type = incomingData[0];
+
+  switch (msg_type) {
+    case DISTANCE:
+      break;
+
+    case OPERATION:
+      break;
+
+    case PID_DRONE:
+      static pid_struct rec_pid;
+      memcpy(&rec_pid, incomingData, sizeof(rec_pid));
+
+      printf("--- Measurements ---\nerror: %f   error_sum: %f   error_div: %f   error_prev: %f    desired_distance: %f    actual_distance: %f   pwm: %f   output: %f\n\n\n", 
+          rec_pid.error, rec_pid.error_sum, rec_pid.error_div, rec_pid.error_prev, rec_pid.desired_distance, rec_pid.actual_distance, rec_pid.pwm, rec_pid.output);
+      break;
+
+    default:
+      break;
+  }
+}
+
+
 static void example_wifi_init(void)
 {
     ESP_ERROR_CHECK(esp_netif_init());
@@ -174,6 +201,7 @@ extern "C" {void app_main(void)
     // Once ESPNow is successfully Init, we will register for Send CB to
     // get the status of Trasnmitted packet
     esp_now_register_send_cb(esp_now_send_cb_t(OnDataSent));
+    esp_now_register_recv_cb(esp_now_recv_cb_t(OnDataRecv));
 
     // Register peer
     memcpy(peerInfo.peer_addr, broadcastAddress, 6);
