@@ -24,8 +24,12 @@ float error, error_sum, error_div, error_prev, desired_distance, actual_distance
 bool operation_state;
 
 extern "C" {void app_main(void) {
+  uint8_t mac_adr[6];
   desired_distance = 1.5;
   operation_state = true;
+
+  pid_struct pid_struct;
+  pid_struct.msg_type = PID_DRONE;
 
   pwm = 128;
   esp_now_full_init();
@@ -73,12 +77,25 @@ extern "C" {void app_main(void) {
       static int i = 0;
       i++;
       if (i > 250) {
-        printf("--- Measurements ---\nerror: %f   error_sum: %f   error_div: %f   error_prev: %f    desired_distance: %f    actual_distance: %f   pwm: %f   output: %f\n\n\n", 
-            error, error_sum, error_div, error_prev, desired_distance, actual_distance, pwm, output);
+        pid_struct.error = error;
+        pid_struct.error_sum = error_sum;
+        pid_struct.error_div = error_div;
+        pid_struct.error_prev = error_prev;
+        pid_struct.desired_distance = desired_distance;
+        pid_struct.actual_distance = actual_distance;
+        pid_struct.pwm = pwm;
+        pid_struct.output = output;
+
+        esp_err_t result = esp_now_send(mac_adr, (uint8_t *) &pid_struct, sizeof(pid_struct));
+        if (result == ESP_OK) {
+          printf("PID debug info send succes");
+        }
+        else {
+          printf("PID debug info send fail");
+        }
         i = 0;
       } 
 #endif
-
     }
   }
 }}

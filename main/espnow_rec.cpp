@@ -1,12 +1,24 @@
 #include "espnow_rec.h"
 
+uint8_t mac_adr[6];
+
 // callback function that will be executed when data is received
 void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
+  static esp_now_peer_info_t peerInfo;
 
-  //add peer
+  // Register peer
+  memcpy(mac_adr, mac, 6);
+  peerInfo.channel = 0;  
+  peerInfo.encrypt = false;
+
+  // Add peer        
+  if (esp_now_add_peer(&peerInfo) != ESP_OK){
+    printf("Failed to add peer\n");
+    return;
+  }
 
   uint8_t msg_type = incomingData[0];
-  
+
   switch (msg_type) {
     case DISTANCE:
       static distance_struct recDistance;
@@ -23,6 +35,11 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
     default:
       break;
   }
+}
+
+// callback when data is sent
+void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
+  printf(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success\n" : "Delivery Fail\n");
 }
 
 void example_wifi_init(void) {
@@ -47,5 +64,6 @@ void esp_now_full_init() {
   example_wifi_init();
   ESP_ERROR_CHECK( esp_now_init() );
 
+  esp_now_register_send_cb(esp_now_send_cb_t(OnDataSent));
   esp_now_register_recv_cb(esp_now_recv_cb_t(OnDataRecv));
 }
