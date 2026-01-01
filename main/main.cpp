@@ -20,11 +20,17 @@
 // REPLACE WITH YOUR RECEIVER MAC Address
 uint8_t broadcastAddress[] = {0x80, 0xF3, 0xDA, 0x55, 0x9B, 0x00};
 
-
 enum MSG_TYPE {
   DISTANCE,
   OPERATION,
 };
+
+typedef struct operation_struct {
+  int msg_type;
+  bool operation_state;
+} operation_struct;
+
+operation_struct myOpState;
 
 typedef struct struct_message {
   int msg_type;
@@ -33,7 +39,6 @@ typedef struct struct_message {
 
 float distance;
 
-// Create a struct_message called myData
 struct_message myData;
 
 esp_now_peer_info_t peerInfo;
@@ -91,21 +96,23 @@ static void button_monitor(void *arg) {
   while (1) {
     // Read GPIO level (current state)
     int level = gpio_get_level(BUTTON_PIN);
+    
+    static bool operation_state = true;
 
     if (level == 1) {
-      gpio_set_level((gpio_num_t)2, 1);
-      vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay 1 second
-      gpio_set_level((gpio_num_t)2, 0);
+      operation_state = !operation_state;
+
+      myOpState.operation_state = operation_state;
+
+      esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myOpState, sizeof(myOpState));
+      if (result == ESP_OK) {
+        printf("operation state send succes: %d ", myOpState.operation_state);
+      }
+      else {
+        printf("operation state send fail: %d ", myOpState.operation_state);
+      }
     }
-
     vTaskDelay(200 / portTICK_PERIOD_MS); // Delay 200ms
-  }
-
-  while (1) {
-    gpio_set_level((gpio_num_t)2, 0);
-    vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay 1 second
-    gpio_set_level((gpio_num_t)2, 1);
-    vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay 1 second
   }
 }
 
@@ -121,6 +128,7 @@ static void rx_task(void *arg) {
       snprintf(data, rxBytes, "%.2f", distance);
 
       gpio_set_level((gpio_num_t)2, 1);
+
       myData.distance = distance;
 
       // Send message via ESP-NOW
@@ -170,24 +178,13 @@ extern "C" {void app_main(void)
       return;
     }
 
+    myOpState.msg_type = OPERATION;
+    myData.msg_type = DISTANCE;
+
     uart_init();
     xTaskCreate(button_monitor, "button_monitor", 4096, NULL, configMAX_PRIORITIES - 1, NULL);
     xTaskCreate(rx_task, "uart_rx_task", 4096, NULL, configMAX_PRIORITIES - 1, NULL);
 
     gpio_reset_pin((gpio_num_t)2);
     gpio_set_direction((gpio_num_t)2, GPIO_MODE_OUTPUT);
-
-    while (1) {
-      myData.msg_type = DISTANCE;
-      myData.distance = 15;
-      esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
-      if (result == ESP_OK) {
-        printf("Distance send succes: %f    ", myData.distance);
-      }
-      else {
-        printf("Unknown error. Distance was valid: %f\n", myData.distance);
-      }
-
-      vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay 1 second
-    }
   }}
