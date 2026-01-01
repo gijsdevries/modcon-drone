@@ -24,7 +24,9 @@ float error, error_sum, error_div, error_prev, desired_distance, actual_distance
 bool operation_state;
 
 extern "C" {void app_main(void) {
-  uint8_t mac_adr[6];
+  extern uint8_t broadcastAddress[6];
+  uint8_t temp_broadcastAddress[] = {0x80, 0xF3, 0xDA, 0x55, 0x9B, 0x00};
+  memcpy(broadcastAddress, temp_broadcastAddress, 6);
   desired_distance = 1.5;
   operation_state = true;
 
@@ -76,7 +78,7 @@ extern "C" {void app_main(void) {
 #ifdef DEBUG
       static int i = 0;
       i++;
-      if (i > 250) {
+      if (i > 25) {
         pid_struct.error = error;
         pid_struct.error_sum = error_sum;
         pid_struct.error_div = error_div;
@@ -86,13 +88,53 @@ extern "C" {void app_main(void) {
         pid_struct.pwm = pwm;
         pid_struct.output = output;
 
-        esp_err_t result = esp_now_send(mac_adr, (uint8_t *) &pid_struct, sizeof(pid_struct));
-        if (result == ESP_OK) {
-          printf("PID debug info send succes");
+        esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &pid_struct, sizeof(pid_struct));
+
+        switch (result) {
+          case ESP_OK:
+            printf("[ESP-NOW] Send queued successfully (ESP_OK)\n");
+            break;
+
+          case ESP_ERR_ESPNOW_NOT_INIT:
+            printf("[ESP-NOW] ERROR: ESP-NOW not initialized\n");
+            break;
+
+          case ESP_ERR_ESPNOW_ARG:
+            printf("[ESP-NOW] ERROR: Invalid argument\n");
+            break;
+
+          case ESP_ERR_ESPNOW_NO_MEM:
+            printf("[ESP-NOW] ERROR: Out of memory\n");
+            break;
+
+          case ESP_ERR_ESPNOW_NOT_FOUND:
+            printf("[ESP-NOW] ERROR: Peer not found\n");
+            break;
+
+          case ESP_ERR_ESPNOW_IF:
+            printf("[ESP-NOW] ERROR: Interface mismatch\n");
+            break;
+
+          case ESP_ERR_ESPNOW_CHAN:
+            printf("[ESP-NOW] ERROR: Channel mismatch\n");
+            break;
+
+          case ESP_ERR_ESPNOW_INTERNAL:
+            printf("[ESP-NOW] ERROR: Internal error\n");
+            break;
+
+          default:
+            printf("[ESP-NOW] ERROR: Unknown error (0x%X)\n", result);
+            break;
         }
-        else {
-          printf("PID debug info send fail");
-        }
+        /*
+           if (result == ESP_OK) {
+           printf("PID debug info send succes");
+           }
+           else {
+           printf("PID debug info send fail");
+           }
+           */
         i = 0;
       } 
 #endif

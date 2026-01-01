@@ -1,21 +1,10 @@
 #include "espnow_rec.h"
 
-uint8_t mac_adr[6];
+esp_now_peer_info_t peerInfo;
+uint8_t broadcastAddress[6];
 
 // callback function that will be executed when data is received
 void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
-  static esp_now_peer_info_t peerInfo;
-
-  // Register peer
-  memcpy(mac_adr, mac, 6);
-  peerInfo.channel = 0;  
-  peerInfo.encrypt = false;
-
-  // Add peer        
-  if (esp_now_add_peer(&peerInfo) != ESP_OK){
-    printf("Failed to add peer\n");
-    return;
-  }
 
   uint8_t msg_type = incomingData[0];
 
@@ -66,4 +55,15 @@ void esp_now_full_init() {
 
   esp_now_register_send_cb(esp_now_send_cb_t(OnDataSent));
   esp_now_register_recv_cb(esp_now_recv_cb_t(OnDataRecv));
+
+  // Register peer
+  memcpy(peerInfo.peer_addr, broadcastAddress, 6);
+  peerInfo.channel = 0;  
+  peerInfo.encrypt = false;
+
+  // Add peer        
+  if (esp_now_add_peer(&peerInfo) != ESP_OK){
+    printf("Failed to add peer\n");
+    return;
+  }
 }

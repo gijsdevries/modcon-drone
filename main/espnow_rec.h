@@ -36,13 +36,12 @@ typedef struct pid_struct {
   float actual_distance;
   float pwm;
   float output;
-
 } pid_struct;
 
 
 extern float desired_distance;
 extern bool operation_state;
-extern uint8_t mac_adr[6];
+extern uint8_t broadcastAddress[6];
 
 void esp_now_full_init();
 
