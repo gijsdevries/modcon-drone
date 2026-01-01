@@ -20,7 +20,14 @@
 // REPLACE WITH YOUR RECEIVER MAC Address
 uint8_t broadcastAddress[] = {0x80, 0xF3, 0xDA, 0x55, 0x9B, 0x00};
 
+
+enum MSG_TYPE {
+  DISTANCE,
+  OPERATION,
+};
+
 typedef struct struct_message {
+  int msg_type;
   float distance;
 } struct_message;
 
@@ -65,6 +72,15 @@ void uart_init(void) {
     uart_driver_install(UART_NUM_1, RX_BUF_SIZE * 2, 0, 0, NULL, 0);
     uart_param_config(UART_NUM_1, &uart_config);
     uart_set_pin(UART_NUM_1, -1, RXD_PIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+}
+
+static void button_monitor(void *arg) {
+  while (1) {
+    gpio_set_level((gpio_num_t)2, 0);
+    vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay 1 second
+    gpio_set_level((gpio_num_t)2, 1);
+    vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay 1 second
+  }
 }
 
 static void rx_task(void *arg) {
@@ -141,13 +157,14 @@ extern "C" {void app_main(void)
     }
 
     uart_init();
+    xTaskCreate(button_monitor, "button_monitor", 4096, NULL, configMAX_PRIORITIES - 1, NULL);
     xTaskCreate(rx_task, "uart_rx_task", 4096, NULL, configMAX_PRIORITIES - 1, NULL);
 
     gpio_reset_pin((gpio_num_t)2);
     gpio_set_direction((gpio_num_t)2, GPIO_MODE_OUTPUT);
 
     while (1) {
-
+      myData.msg_type = DISTANCE;
       myData.distance = 15;
       esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
       if (result == ESP_OK) {
