@@ -29,7 +29,7 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
     case PID_FACTOR:
       static pid_factor recPID;
       memcpy(&recPID, incomingData, sizeof(recPID));
-      kp = recPID.kd;
+      kp = recPID.kp;
       ki = recPID.ki;
       kd = recPID.kd;
 #ifdef ESP_NOW_DEBUG
