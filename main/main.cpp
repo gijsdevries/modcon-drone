@@ -11,10 +11,6 @@
 #include "espnow_rec.h"
 #include "pwm.h"
 
-#define KP 0.08
-#define KI 0.8
-#define KD 1.3 
-
 #define dT 0.01
 
 #define BUILTIN_LED (gpio_num_t)2
@@ -22,10 +18,15 @@
 
 float error, error_sum, error_div, error_prev, desired_distance, actual_distance, pwm, output;
 bool operation_state;
+float kp, ki, kd;
 
 extern "C" {void app_main(void) {
   desired_distance = 1.5;
   operation_state = false;
+
+  kp = 0;
+  ki = 0;
+  kd = 0;
 
   pid_struct pid_struct;
   pid_struct.msg_type = PID_DRONE;
@@ -48,6 +49,14 @@ extern "C" {void app_main(void) {
   setPWM(0);
   vTaskDelay(3000 / portTICK_PERIOD_MS);
 
+  bool led_state = true ;
+
+  while (kp == 0 && ki == 0 && kd == 0) {
+    gpio_set_level((gpio_num_t)2, led_state);
+    led_state = !led_state; 
+    vTaskDelay(200 / portTICK_PERIOD_MS);
+  }
+
   while (1) {
     gpio_set_level((gpio_num_t)2, operation_state);
 
@@ -60,7 +69,7 @@ extern "C" {void app_main(void) {
       error = desired_distance - actual_distance;
       error_sum += error * dT;
       error_div = (error - error_prev) / dT;
-      output = error*KP + error*KI + error*KD;
+      output = error*kp + error*ki + error*kd;
       error_prev = error;
 
       pwm *= output;

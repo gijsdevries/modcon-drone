@@ -21,6 +21,14 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
       operation_state = !operation_state;
       break;
 
+    case PID_FACTOR:
+      static pid_factor recPID;
+      memcpy(&recPID, incomingData, sizeof(recPID));
+      kp = recPID.kd;
+      ki = recPID.ki;
+      kd = recPID.kd;
+      break;
+
     default:
       break;
   }
