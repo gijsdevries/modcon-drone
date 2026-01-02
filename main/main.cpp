@@ -24,6 +24,7 @@ enum MSG_TYPE {
   DISTANCE,
   OPERATION,
   PID_DRONE,
+  PID_FACTOR,
 };
 
 typedef struct operation_struct {
@@ -35,6 +36,8 @@ typedef struct struct_message {
   int msg_type;
   float distance;
 } struct_message;
+
+float distance;
 
 typedef struct pid_struct {
   uint8_t msg_type;
@@ -48,7 +51,12 @@ typedef struct pid_struct {
   float output;
 } pid_struct;
 
-float distance;
+typedef struct pid_factor {
+  uint8_t msg_type;
+  float kp;
+  float ki;
+  float kd;
+} pid_factor;
 
 struct_message myData;
 operation_struct myOpState;
@@ -76,7 +84,7 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
       static pid_struct rec_pid;
       memcpy(&rec_pid, incomingData, sizeof(rec_pid));
 
-      printf("--- Measurements ---\nerror: %f   error_sum: %f   error_div: %f   error_prev: %f    desired_distance: %f    actual_distance: %f   pwm: %f   output: %f\n\n\n", 
+      printf("--- Measurements ---\nerror: %f\n   error_sum: %f\n   error_div: %f\n   error_prev: %f\n    desired_distance: %f\n    actual_distance: %f\n   pwm: %f\n   output: %f\n\n\n", 
           rec_pid.error, rec_pid.error_sum, rec_pid.error_div, rec_pid.error_prev, rec_pid.desired_distance, rec_pid.actual_distance, rec_pid.pwm, rec_pid.output);
       break;
 
@@ -217,6 +225,23 @@ extern "C" {void app_main(void)
 
     myOpState.msg_type = OPERATION;
     myData.msg_type = DISTANCE;
+
+    pid_factor pid_factor = {
+      .msg_type = PID_FACTOR,
+      .kp = 0.08,
+      .ki = 1.13,
+      .kd = 0.80,
+    };
+
+    esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &pid_factor, sizeof(pid_factor));
+
+    while (result != ESP_OK) {
+      esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &pid_factor, sizeof(pid_factor));
+      printf("failed to send pid factors...\n");
+      vTaskDelay(200 / portTICK_PERIOD_MS);
+    }
+
+    printf("pid factors send succes\n");
 
     uart_init();
     xTaskCreate(button_monitor, "button_monitor", 4096, NULL, configMAX_PRIORITIES - 1, NULL);
