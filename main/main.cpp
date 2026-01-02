@@ -49,9 +49,11 @@ extern "C" {void app_main(void) {
   vTaskDelay(3000 / portTICK_PERIOD_MS);
 
   while (1) {
+    gpio_set_level((gpio_num_t)2, operation_state);
+
     if (operation_state == false) {
       setPWM(0);
-      vTaskDelay(1000 / portTICK_PERIOD_MS);
+      vTaskDelay(10 / portTICK_PERIOD_MS);
     }
     else {
       actual_distance = hc_sr04_measure_cm(sensor) / 100; 

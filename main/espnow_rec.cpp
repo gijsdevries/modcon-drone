@@ -18,9 +18,7 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
       break;
 
     case OPERATION:
-      static operation_struct recOp;
-      memcpy(&recOp, incomingData, sizeof(recOp));
-      operation_state = recOp.operation_state;
+      operation_state = !operation_state;
       break;
 
     default:
