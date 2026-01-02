@@ -2,7 +2,6 @@
 
 esp_now_peer_info_t peerInfo;
 
-// Broadcast MAC Address TODO
 uint8_t broadcastAddress[] = {0x80, 0xF3, 0xDA, 0x54, 0x18, 0x38};
 
 // callback function that will be executed when data is received
@@ -15,10 +14,16 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
       static distance_struct recDistance;
       memcpy(&recDistance, incomingData, sizeof(recDistance));
       desired_distance = recDistance.distance / 100; //cm to meter
+#ifdef ESP_NOW_DEBUG
+      printf("recieved desired_distance: %f\n", desired_distance);
+#endif
       break;
 
     case OPERATION:
       operation_state = !operation_state;
+#ifdef ESP_NOW_DEBUG
+      printf("recieved operation_state: %d\n", operation_state);
+#endif
       break;
 
     case PID_FACTOR:
@@ -27,9 +32,15 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
       kp = recPID.kd;
       ki = recPID.ki;
       kd = recPID.kd;
+#ifdef ESP_NOW_DEBUG
+      printf("recieved PID values:\nkp = %f\nki = %f\nkd = %f\n", kp, ki, kd);
+#endif
       break;
 
     default:
+#ifdef ESP_NOW_DEBUG
+      printf("recieved unknown val: %02X", msg_type);
+#endif
       break;
   }
 }

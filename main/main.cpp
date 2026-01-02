@@ -49,13 +49,15 @@ extern "C" {void app_main(void) {
   setPWM(0);
   vTaskDelay(3000 / portTICK_PERIOD_MS);
 
-  bool led_state = true ;
+  bool led_state = true;
 
   while (kp == 0 && ki == 0 && kd == 0) {
     gpio_set_level((gpio_num_t)2, led_state);
     led_state = !led_state; 
     vTaskDelay(200 / portTICK_PERIOD_MS);
   }
+
+  printf("recieved PID values:\nkp = %f\nki = %f\nkd = %f\n", kp, ki, kd);
 
   while (1) {
     gpio_set_level((gpio_num_t)2, operation_state);

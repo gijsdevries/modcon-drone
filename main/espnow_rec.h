@@ -56,4 +56,6 @@ extern float kd;
 
 void esp_now_full_init();
 
+#define ESP_NOW_DEBUG
+
 #endif
