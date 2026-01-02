@@ -14,6 +14,7 @@ enum MSG_TYPE {
   DISTANCE,
   OPERATION,
   PID_DRONE,
+  PID_FACTOR,
 };
 
 typedef struct distance_struct {
@@ -38,11 +39,23 @@ typedef struct pid_struct {
   float output;
 } pid_struct;
 
+typedef struct pid_factor {
+  uint8_t msg_type;
+  float kp;
+  float ki;
+  float kd;
+} pid_factor;
 
 extern float desired_distance;
 extern bool operation_state;
 extern uint8_t broadcastAddress[];
 
+extern float kp;
+extern float ki;
+extern float kd;
+
 void esp_now_full_init();
+
+#define ESP_NOW_DEBUG
 
 #endif
