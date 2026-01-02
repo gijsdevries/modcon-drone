@@ -46,7 +46,6 @@ typedef struct pid_struct {
   float actual_distance;
   float pwm;
   float output;
-
 } pid_struct;
 
 float distance;
@@ -140,6 +139,7 @@ static void button_monitor(void *arg) {
 
     if (level == 1) {
       operation_state = !operation_state;
+      gpio_set_level((gpio_num_t)2, operation_state);
 
       myOpState.operation_state = operation_state;
 
