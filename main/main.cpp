@@ -135,7 +135,7 @@ static void button_monitor(void *arg) {
     // Read GPIO level (current state)
     int level = gpio_get_level(BUTTON_PIN);
     
-    static bool operation_state = true;
+    static bool operation_state = false;
     gpio_set_level((gpio_num_t)2, operation_state);
 
     if (level == 1) {
