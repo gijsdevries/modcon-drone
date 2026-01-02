@@ -23,6 +23,7 @@ uint8_t broadcastAddress[] = {0x80, 0xF3, 0xDA, 0x55, 0x9B, 0x00};
 enum MSG_TYPE {
   DISTANCE,
   OPERATION,
+  PID_DRONE,
 };
 
 typedef struct operation_struct {
@@ -30,23 +31,60 @@ typedef struct operation_struct {
   bool operation_state;
 } operation_struct;
 
-operation_struct myOpState;
-
 typedef struct struct_message {
   int msg_type;
   float distance;
 } struct_message;
 
+typedef struct pid_struct {
+  uint8_t msg_type;
+  float error; 
+  float error_sum;
+  float error_div;
+  float error_prev;
+  float desired_distance;
+  float actual_distance;
+  float pwm;
+  float output;
+} pid_struct;
+
 float distance;
 
 struct_message myData;
-
+operation_struct myOpState;
 esp_now_peer_info_t peerInfo;
 
 // callback when data is sent
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   printf(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success\n" : "Delivery Fail\n");
 }
+
+// callback function that will be executed when data is received
+void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
+  static esp_now_peer_info_t peerInfo;
+
+  uint8_t msg_type = incomingData[0];
+
+  switch (msg_type) {
+    case DISTANCE:
+      break;
+
+    case OPERATION:
+      break;
+
+    case PID_DRONE:
+      static pid_struct rec_pid;
+      memcpy(&rec_pid, incomingData, sizeof(rec_pid));
+
+      printf("--- Measurements ---\nerror: %f   error_sum: %f   error_div: %f   error_prev: %f    desired_distance: %f    actual_distance: %f   pwm: %f   output: %f\n\n\n", 
+          rec_pid.error, rec_pid.error_sum, rec_pid.error_div, rec_pid.error_prev, rec_pid.desired_distance, rec_pid.actual_distance, rec_pid.pwm, rec_pid.output);
+      break;
+
+    default:
+      break;
+  }
+}
+
 
 static void example_wifi_init(void)
 {
@@ -98,9 +136,11 @@ static void button_monitor(void *arg) {
     int level = gpio_get_level(BUTTON_PIN);
     
     static bool operation_state = true;
+    gpio_set_level((gpio_num_t)2, operation_state);
 
     if (level == 1) {
       operation_state = !operation_state;
+      gpio_set_level((gpio_num_t)2, operation_state);
 
       myOpState.operation_state = operation_state;
 
@@ -112,7 +152,7 @@ static void button_monitor(void *arg) {
         printf("operation state send fail: %d ", myOpState.operation_state);
       }
     }
-    vTaskDelay(200 / portTICK_PERIOD_MS); // Delay 200ms
+    vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay 200ms
   }
 }
 
@@ -162,6 +202,7 @@ extern "C" {void app_main(void)
     // Once ESPNow is successfully Init, we will register for Send CB to
     // get the status of Trasnmitted packet
     esp_now_register_send_cb(esp_now_send_cb_t(OnDataSent));
+    esp_now_register_recv_cb(esp_now_recv_cb_t(OnDataRecv));
 
     // Register peer
     memcpy(peerInfo.peer_addr, broadcastAddress, 6);
