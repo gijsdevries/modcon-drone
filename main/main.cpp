@@ -68,6 +68,8 @@ extern "C" {void app_main(void) {
     }
     else {
       actual_distance = hc_sr04_measure_cm(sensor) / 100; 
+      if (actual_distance < 0.05 || actual_distance > 2.00)
+        actual_distance = 0.05;
       error = desired_distance - actual_distance;
       error_sum += error * dT;
       error_div = (error - error_prev) / dT;
