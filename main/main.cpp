@@ -25,7 +25,7 @@ bool operation_state;
 
 extern "C" {void app_main(void) {
   desired_distance = 1.5;
-  operation_state = true;
+  operation_state = false;
 
   pid_struct pid_struct;
   pid_struct.msg_type = PID_DRONE;
