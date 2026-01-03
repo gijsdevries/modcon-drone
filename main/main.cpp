@@ -67,7 +67,8 @@ extern "C" {void app_main(void) {
       vTaskDelay(10 / portTICK_PERIOD_MS);
     }
     else {
-      actual_distance = hc_sr04_measure_cm(sensor) / 100; 
+      actual_distance = hc_sr04_measure_cm(sensor); 
+
       if (actual_distance < 0)
         actual_distance = -1;
       else if (actual_distance < 0.05 || actual_distance > 2.00)
