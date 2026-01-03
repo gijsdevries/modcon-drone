@@ -21,7 +21,8 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
 
     case OPERATION:
       //TODO test
-      operation_state = incomingData[1];
+      operation_state = !operation_state;
+      //operation_state = incomingData[1];
 #ifdef ESP_NOW_DEBUG
       printf("recieved operation_state: %d\n", operation_state);
 #endif

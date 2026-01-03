@@ -56,7 +56,6 @@ extern "C" {void app_main(void) {
     led_state = !led_state; 
     vTaskDelay(200 / portTICK_PERIOD_MS);
   }
-
   printf("recieved PID values:\nkp = %f\nki = %f\nkd = %f\n", kp, ki, kd);
 
   while (1) {
@@ -67,12 +66,12 @@ extern "C" {void app_main(void) {
       vTaskDelay(10 / portTICK_PERIOD_MS);
     }
     else {
-      actual_distance = hc_sr04_measure_cm(sensor); 
+      actual_distance = (float)hc_sr04_measure_cm(sensor); 
 
       if (actual_distance < 0)
         actual_distance = -1;
-      else if (actual_distance < 0.05 || actual_distance > 2.00)
-        actual_distance = 0.05;
+      else if (actual_distance < 5 || actual_distance > 200)
+        actual_distance = 5;
 
       error = desired_distance - actual_distance;
       error_sum += error * dT;
@@ -89,13 +88,12 @@ extern "C" {void app_main(void) {
 
       setPWM(pwm);
 
-
       vTaskDelay((1000*dT) / portTICK_PERIOD_MS);
 
 #ifdef DEBUG
       static int i = 0;
       i++;
-      if (i > 250) {
+      if (i > 25) {
         pid_struct.error = error;
         pid_struct.error_sum = error_sum;
         pid_struct.error_div = error_div;
@@ -104,6 +102,8 @@ extern "C" {void app_main(void) {
         pid_struct.actual_distance = actual_distance;
         pid_struct.pwm = pwm;
         pid_struct.output = output;
+
+      printf("                distance: %f\n", actual_distance);
 
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &pid_struct, sizeof(pid_struct));
 
