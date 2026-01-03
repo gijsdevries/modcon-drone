@@ -21,7 +21,7 @@ bool operation_state;
 float kp, ki, kd;
 
 extern "C" {void app_main(void) {
-  desired_distance = 1.5;
+  desired_distance = 0.5;
   operation_state = false;
 
   kp = 0;
@@ -31,7 +31,7 @@ extern "C" {void app_main(void) {
   pid_struct pid_struct;
   pid_struct.msg_type = PID_DRONE;
 
-  pwm = 128;
+  pwm = 196;
   esp_now_full_init();
 
   hc_sr04_config_t config = {
@@ -68,7 +68,9 @@ extern "C" {void app_main(void) {
     }
     else {
       actual_distance = hc_sr04_measure_cm(sensor) / 100; 
-      if (actual_distance < 0.05 || actual_distance > 2.00)
+      if (actual_distance < 0)
+        actual_distance = -1;
+      else if (actual_distance < 0.05 || actual_distance > 2.00)
         actual_distance = 0.05;
       error = desired_distance - actual_distance;
       error_sum += error * dT;
@@ -80,10 +82,11 @@ extern "C" {void app_main(void) {
 
       if (pwm > 255)
         pwm = 255;
-      else if (pwm < 1)
-        pwm = 1;
+      else if (pwm < 128)
+        pwm = 128;
 
       setPWM(pwm);
+
 
       vTaskDelay((1000*dT) / portTICK_PERIOD_MS);
 
