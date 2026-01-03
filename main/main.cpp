@@ -31,7 +31,7 @@ extern "C" {void app_main(void) {
   pid_struct pid_struct;
   pid_struct.msg_type = PID_DRONE;
 
-  pwm = 196;
+  pwm = 204;
   esp_now_full_init();
 
   hc_sr04_config_t config = {
@@ -72,6 +72,7 @@ extern "C" {void app_main(void) {
         actual_distance = -1;
       else if (actual_distance < 0.05 || actual_distance > 2.00)
         actual_distance = 0.05;
+
       error = desired_distance - actual_distance;
       error_sum += error * dT;
       error_div = (error - error_prev) / dT;
@@ -80,10 +81,10 @@ extern "C" {void app_main(void) {
 
       pwm *= output;
 
-      if (pwm > 255)
-        pwm = 255;
-      else if (pwm < 128)
-        pwm = 128;
+      if (pwm > 408)
+        pwm = 408;
+      else if (pwm < 1)
+        pwm = 1;
 
       setPWM(pwm);
 
