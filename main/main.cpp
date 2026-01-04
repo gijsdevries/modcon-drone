@@ -12,7 +12,6 @@
 #include "pwm.h"
 
 #define dT 0.01
-
 #define BUILTIN_LED (gpio_num_t)2
 #define DEBUG
 
@@ -31,7 +30,7 @@ extern "C" {void app_main(void) {
   pid_struct pid_struct;
   pid_struct.msg_type = PID_DRONE;
 
-  pwm = 204;
+  pwm = BIT_16_MAX * 0.05;
   esp_now_full_init();
 
   hc_sr04_config_t config = {
@@ -81,8 +80,8 @@ extern "C" {void app_main(void) {
 
       pwm *= output;
 
-      if (pwm > 408)
-        pwm = 408;
+      if (pwm > BIT_16_MAX * 0.10)
+        pwm = BIT_16_MAX * 0.10;
       else if (pwm < 1)
         pwm = 1;
 
@@ -93,7 +92,7 @@ extern "C" {void app_main(void) {
 #ifdef DEBUG
       static int i = 0;
       i++;
-      if (i > 25) {
+      if (i > 250) {
         pid_struct.error = error;
         pid_struct.error_sum = error_sum;
         pid_struct.error_div = error_div;

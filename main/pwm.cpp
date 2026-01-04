@@ -1,9 +1,8 @@
 #include "pwm.h"
 
-#define FIVE_PERCENT_DUTY_CYCLE (8192 * 0.05)
+#define FIVE_PERCENT_DUTY_CYCLE (BIT_16_MAX * 0.05) //3276
 
 void setPWM(float motorspeed) {
-  //TODO test
   uint16_t duty_cycle = FIVE_PERCENT_DUTY_CYCLE + (uint16_t)motorspeed;
 
   ESP_ERROR_CHECK(ledc_set_duty(LEDC_MODE, LEDC_CHANNEL, duty_cycle));
