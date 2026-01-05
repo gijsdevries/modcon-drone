@@ -21,7 +21,7 @@ bool operation_state;
 float kp, ki, kd;
 
 extern "C" {void app_main(void) {
-  desired_distance = 1.5;
+  desired_distance = 0;
   operation_state = false;
 
   kp = 0;
@@ -31,7 +31,7 @@ extern "C" {void app_main(void) {
   pid_struct pid_struct;
   pid_struct.msg_type = PID_DRONE;
 
-  pwm = 128;
+  //pwm = 128;
   esp_now_full_init();
 
   hc_sr04_config_t config = {
@@ -49,6 +49,8 @@ extern "C" {void app_main(void) {
   setPWM(0);
   vTaskDelay(3000 / portTICK_PERIOD_MS);
 
+  /*
+
   bool led_state = true;
 
   while (kp == 0 && ki == 0 && kd == 0) {
@@ -58,6 +60,7 @@ extern "C" {void app_main(void) {
   }
 
   printf("recieved PID values:\nkp = %f\nki = %f\nkd = %f\n", kp, ki, kd);
+  */
 
   while (1) {
     gpio_set_level((gpio_num_t)2, operation_state);
@@ -67,6 +70,9 @@ extern "C" {void app_main(void) {
       vTaskDelay(10 / portTICK_PERIOD_MS);
     }
     else {
+      setPWM(desired_distance);
+      vTaskDelay((10) / portTICK_PERIOD_MS);
+      /*
       actual_distance = hc_sr04_measure_cm(sensor) / 100; 
       error = desired_distance - actual_distance;
       error_sum += error * dT;
@@ -83,7 +89,7 @@ extern "C" {void app_main(void) {
 
       setPWM(pwm);
 
-      vTaskDelay((1000*dT) / portTICK_PERIOD_MS);
+      */
 
 #ifdef DEBUG
       static int i = 0;
