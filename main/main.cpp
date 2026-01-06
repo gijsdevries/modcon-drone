@@ -94,7 +94,6 @@ extern "C" {void app_main(void) {
 
         setPWM(pwm);
 
-        vTaskDelay(dT*1000 / portTICK_PERIOD_MS);
 
       }
 #ifdef DEBUG
@@ -122,6 +121,7 @@ extern "C" {void app_main(void) {
         }
         i = 0;
       } 
+      vTaskDelay(dT*1000 / portTICK_PERIOD_MS);
 #endif
     }
   }

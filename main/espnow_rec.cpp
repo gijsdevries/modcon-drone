@@ -13,7 +13,7 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
     case DISTANCE:
       static distance_struct recDistance;
       memcpy(&recDistance, incomingData, sizeof(recDistance));
-      desired_distance = recDistance.distance;
+      desired_distance = recDistance.distance / 100;
 #ifdef ESP_NOW_DEBUG
       printf("recieved desired_distance: %f\n", desired_distance);
 #endif
