@@ -12,6 +12,11 @@
 #include "pwm.h"
 
 #define dT 0.01
+
+#define DEBUG_PRINT_INTERVAL 250
+#define MIN_RANGE 0.05
+#define MAX_RANGE 2
+
 #define BUILTIN_LED (gpio_num_t)2
 #define DEBUG
 
@@ -20,7 +25,7 @@ bool operation_state;
 float kp, ki, kd;
 
 extern "C" {void app_main(void) {
-  desired_distance = 0.5;
+  desired_distance = 0.3;
   operation_state = false;
 
   kp = 0;
@@ -30,7 +35,6 @@ extern "C" {void app_main(void) {
   pid_struct pid_struct;
   pid_struct.msg_type = PID_DRONE;
 
-  pwm = BIT_16_MAX * 0.05;
   esp_now_full_init();
 
   hc_sr04_config_t config = {
@@ -65,34 +69,35 @@ extern "C" {void app_main(void) {
       vTaskDelay(10 / portTICK_PERIOD_MS);
     }
     else {
-      actual_distance = (float)hc_sr04_measure_cm(sensor); 
+      actual_distance = hc_sr04_measure_cm(sensor);
 
-      if (actual_distance < 0)
+      if (actual_distance < 0) {
         actual_distance = -1;
-      else if (actual_distance < 5 || actual_distance > 200)
-        actual_distance = 5;
+      }
+      else {
+        actual_distance /= 100; //cm to meter
+        if (actual_distance < MIN_RANGE || actual_distance > MAX_RANGE)
+          actual_distance = MIN_RANGE;
 
-      error = desired_distance - actual_distance;
-      error_sum += error * dT;
-      error_div = (error - error_prev) / dT;
-      output = error*kp + error*ki + error*kd;
-      error_prev = error;
+        error = desired_distance - actual_distance;
+        error_sum += error * dT;
+        error_div = (error - error_prev) / dT;
+        output = error * kp + error_sum * ki + error_div * kd;
+        error_prev = error;
 
-      pwm *= output;
+        pwm = output;
 
-      if (pwm > BIT_16_MAX * 0.10)
-        pwm = BIT_16_MAX * 0.10;
-      else if (pwm < 1)
-        pwm = 1;
+        if (pwm > 120)
+          pwm = 120;
+        else if (pwm < 1)
+          pwm = 1;
 
-      setPWM(pwm);
-
-      vTaskDelay((1000*dT) / portTICK_PERIOD_MS);
-
+        setPWM(pwm);
+      }
 #ifdef DEBUG
       static int i = 0;
       i++;
-      if (i > 250) {
+      if (i > DEBUG_PRINT_INTERVAL) {
         pid_struct.error = error;
         pid_struct.error_sum = error_sum;
         pid_struct.error_div = error_div;
