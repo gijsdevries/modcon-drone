@@ -93,6 +93,9 @@ extern "C" {void app_main(void) {
           pwm = 1;
 
         setPWM(pwm);
+
+        vTaskDelay(dT*1000 / portTICK_PERIOD_MS);
+
       }
 #ifdef DEBUG
       static int i = 0;
@@ -107,7 +110,7 @@ extern "C" {void app_main(void) {
         pid_struct.pwm = pwm;
         pid_struct.output = output;
 
-      printf("                distance: %f\n", actual_distance);
+        printf("                distance: %f\n", actual_distance);
 
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &pid_struct, sizeof(pid_struct));
 
