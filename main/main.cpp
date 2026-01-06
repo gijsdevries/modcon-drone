@@ -59,7 +59,6 @@ extern "C" {void app_main(void) {
     led_state = !led_state; 
     vTaskDelay(200 / portTICK_PERIOD_MS);
   }
-
   printf("recieved PID values:\nkp = %f\nki = %f\nkd = %f\n", kp, ki, kd);
 
   while (1) {
@@ -107,6 +106,8 @@ extern "C" {void app_main(void) {
         pid_struct.actual_distance = actual_distance;
         pid_struct.pwm = pwm;
         pid_struct.output = output;
+
+      printf("                distance: %f\n", actual_distance);
 
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &pid_struct, sizeof(pid_struct));
 
