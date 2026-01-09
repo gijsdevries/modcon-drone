@@ -87,8 +87,8 @@ extern "C" {void app_main(void) {
 
         pwm = output;
 
-        if (pwm > 120)
-          pwm = 120;
+        if (pwm > 255)
+          pwm = 255;
         else if (pwm < 1)
           pwm = 1;
 
