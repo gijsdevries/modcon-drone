@@ -56,6 +56,11 @@ extern "C" {void app_main(void) {
   setPWM(0);
   vTaskDelay(3000 / portTICK_PERIOD_MS);
 
+  while (1) {
+    sendData("hoi");
+    vTaskDelay(200 / portTICK_PERIOD_MS);
+  }
+
   bool led_state = true;
 
   while (kp == 0 && ki == 0 && kd == 0) {

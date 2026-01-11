@@ -14,3 +14,12 @@ void uart_init(void) {
     uart_param_config(UART_NUM_1, &uart_config);
     uart_set_pin(UART_NUM_1, TXD_PIN, -1, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
 }
+
+int sendData(const char* data)
+{
+    const int len = strlen(data);
+    const int txBytes = uart_write_bytes(UART_NUM_1, data, len);
+    //TODO delete print
+    printf("Wrote %d bytes", txBytes);
+    return txBytes;
+}
