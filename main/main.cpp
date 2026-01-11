@@ -30,7 +30,7 @@ float kp, ki, kd;
 
 extern "C" {void app_main(void) {
   desired_distance = 1.8;
-  operation_state = true;
+  operation_state = false;
 
   kp = 0;
   ki = 0;
@@ -61,7 +61,6 @@ extern "C" {void app_main(void) {
   char str[16];
 
   bool led_state = true;
-  /*
 
   while (kp == 0 && ki == 0 && kd == 0) {
     gpio_set_level((gpio_num_t)2, led_state);
@@ -70,7 +69,6 @@ extern "C" {void app_main(void) {
   }
   printf("recieved PID values:\nkp = %f\nki = %f\nkd = %f\n", kp, ki, kd);
 
-  */
   while (1) {
     gpio_set_level((gpio_num_t)2, operation_state);
 
