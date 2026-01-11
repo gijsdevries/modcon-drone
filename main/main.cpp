@@ -17,6 +17,9 @@
 #define MIN_RANGE 0.05
 #define MAX_RANGE 2
 
+#define MAX_PWM 120
+#define MIN_PWM 100
+
 #define BUILTIN_LED (gpio_num_t)2
 #define DEBUG
 
@@ -85,14 +88,11 @@ extern "C" {void app_main(void) {
         output = error * kp + error_sum * ki + error_div * kd;
         error_prev = error;
 
-        pwm = output;
+        output += MIN_PWM;
+        if (output > MAX_PWM)
+          output = MAX_PWM;
 
-        if (pwm > 255)
-          pwm = 255;
-        else if (pwm < 1)
-          pwm = 1;
-
-        setPWM(pwm);
+        setPWM(output);
 
 
       }
