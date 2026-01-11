@@ -50,11 +50,13 @@ extern "C" {void app_main(void) {
 
   pwm_init();
 
+  uart_init();
+
   gpio_reset_pin(BUILTIN_LED);
   gpio_set_direction(BUILTIN_LED, GPIO_MODE_OUTPUT);
 
-  setPWM(0);
-  vTaskDelay(3000 / portTICK_PERIOD_MS);
+  //setPWM(0);
+  //vTaskDelay(3000 / portTICK_PERIOD_MS);
 
   while (1) {
     sendData("hoi");

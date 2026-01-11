@@ -6,7 +6,7 @@
 #include "driver/uart.h"
 #include "string.h"
 
-#define RX_BUF_SIZE 1024
+static const int RX_BUF_SIZE = 1024;
 #define TXD_PIN (gpio_num_t)17
 
 void uart_init(void);
