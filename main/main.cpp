@@ -58,9 +58,17 @@ extern "C" {void app_main(void) {
   sendData("0");
   vTaskDelay(3000 / portTICK_PERIOD_MS);
 
-  while (1) {
-    sendData("101");
-    vTaskDelay(dT*1000 / portTICK_PERIOD_MS);
+  float i = 0;
+  char str[16];
+
+  while (i < 100) {
+    i++;
+    if (i > 90)
+      i = 0;
+
+    sprintf(str, "%d", (int)i);
+    sendData(str);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
   }
 
   bool led_state = true;
@@ -102,9 +110,9 @@ extern "C" {void app_main(void) {
 
         //send uart
         //TODO float to string
-        char* str;
-        sprintf(str, "%d", (int)output);
-        sendData(str);
+        //char* str;
+        //sprintf(str, "%d", (int)output);
+        //sendData(str);
       }
 #ifdef DEBUG
       static int i = 0;
