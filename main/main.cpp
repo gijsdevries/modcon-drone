@@ -58,17 +58,18 @@ extern "C" {void app_main(void) {
   sendData("0");
   vTaskDelay(3000 / portTICK_PERIOD_MS);
 
-  float i = 0;
+  float i = 10;
   char str[16];
 
   while (i < 100) {
     i++;
     if (i > 90)
-      i = 0;
+      i = 10;
 
     sprintf(str, "%d", (int)i);
     sendData(str);
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    sendData("\n");
+    vTaskDelay(100 / portTICK_PERIOD_MS);
   }
 
   bool led_state = true;
