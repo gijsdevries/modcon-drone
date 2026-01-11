@@ -10,6 +10,7 @@
 #include "i2c.h"
 #include "espnow_rec.h"
 #include "pwm.h"
+#include "uart.h"
 
 #define dT 0.01
 
@@ -92,8 +93,7 @@ extern "C" {void app_main(void) {
         if (output > MAX_PWM)
           output = MAX_PWM;
 
-        setPWM(output);
-
+        //send uart
 
       }
 #ifdef DEBUG
