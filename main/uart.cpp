@@ -20,5 +20,6 @@ int sendData(const char* data)
     const int len = strlen(data);
     const int txBytes = uart_write_bytes(UART_NUM_1, data, len);
     //TODO delete print
+    printf("Wrote %d bytes\n", txBytes);
     return txBytes;
 }

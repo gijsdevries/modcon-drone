@@ -59,8 +59,8 @@ extern "C" {void app_main(void) {
   //vTaskDelay(3000 / portTICK_PERIOD_MS);
 
   while (1) {
-    sendData("hoi");
-    vTaskDelay(200 / portTICK_PERIOD_MS);
+    sendData("67");
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
   }
 
   bool led_state = true;
