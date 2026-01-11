@@ -18,8 +18,8 @@
 #define MIN_RANGE 0.05
 #define MAX_RANGE 2
 
-#define MAX_PWM 120
-#define MIN_PWM 100
+#define MAX_PWM 100
+#define MIN_PWM 0
 
 #define BUILTIN_LED (gpio_num_t)2
 #define DEBUG
@@ -55,12 +55,12 @@ extern "C" {void app_main(void) {
   gpio_reset_pin(BUILTIN_LED);
   gpio_set_direction(BUILTIN_LED, GPIO_MODE_OUTPUT);
 
-  //setPWM(0);
-  //vTaskDelay(3000 / portTICK_PERIOD_MS);
+  sendData("0");
+  vTaskDelay(3000 / portTICK_PERIOD_MS);
 
   while (1) {
-    sendData("67");
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    sendData("101");
+    vTaskDelay(dT*1000 / portTICK_PERIOD_MS);
   }
 
   bool led_state = true;
@@ -76,7 +76,7 @@ extern "C" {void app_main(void) {
     gpio_set_level((gpio_num_t)2, operation_state);
 
     if (operation_state == false) {
-      setPWM(0);
+      sendData(0);
       vTaskDelay(10 / portTICK_PERIOD_MS);
     }
     else {
@@ -101,7 +101,10 @@ extern "C" {void app_main(void) {
           output = MAX_PWM;
 
         //send uart
-
+        //TODO float to string
+        char* str;
+        sprintf(str, "%d", (int)output);
+        sendData(str);
       }
 #ifdef DEBUG
       static int i = 0;
