@@ -29,8 +29,8 @@ bool operation_state;
 float kp, ki, kd;
 
 extern "C" {void app_main(void) {
-  desired_distance = 0.3;
-  operation_state = false;
+  desired_distance = 1.8;
+  operation_state = true;
 
   kp = 0;
   ki = 0;
@@ -58,21 +58,10 @@ extern "C" {void app_main(void) {
   sendData("0");
   vTaskDelay(3000 / portTICK_PERIOD_MS);
 
-  float i = 10;
   char str[16];
 
-  while (i < 100) {
-    i++;
-    if (i > 90)
-      i = 10;
-
-    sprintf(str, "%d", (int)i);
-    sendData(str);
-    sendData("\n");
-    vTaskDelay(100 / portTICK_PERIOD_MS);
-  }
-
   bool led_state = true;
+  /*
 
   while (kp == 0 && ki == 0 && kd == 0) {
     gpio_set_level((gpio_num_t)2, led_state);
@@ -81,6 +70,7 @@ extern "C" {void app_main(void) {
   }
   printf("recieved PID values:\nkp = %f\nki = %f\nkd = %f\n", kp, ki, kd);
 
+  */
   while (1) {
     gpio_set_level((gpio_num_t)2, operation_state);
 
@@ -110,10 +100,9 @@ extern "C" {void app_main(void) {
           output = MAX_PWM;
 
         //send uart
-        //TODO float to string
-        //char* str;
-        //sprintf(str, "%d", (int)output);
-        //sendData(str);
+        sprintf(str, "%d", (int)output);
+        sendData(str);
+        sendData("\n");
       }
 #ifdef DEBUG
       static int i = 0;
@@ -127,8 +116,6 @@ extern "C" {void app_main(void) {
         pid_struct.actual_distance = actual_distance;
         pid_struct.pwm = pwm;
         pid_struct.output = output;
-
-        printf("                distance: %f\n", actual_distance);
 
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &pid_struct, sizeof(pid_struct));
 
