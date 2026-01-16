@@ -1,7 +1,6 @@
 #include "adc.h"
 
 adc_oneshot_unit_handle_t adc1_handle;
-static int padc_raw[2][10];
 
 void adc_init() {
   //Vref 3.3V   12 bit
@@ -18,7 +17,7 @@ void adc_init() {
 }
 
 int read_adc() {
-  ESP_ERROR_CHECK(adc_oneshot_read(adc1_handle, EXAMPLE_ADC1_CHAN0, &padc_raw[0][0]));
-
-  return padc_raw[0][0];
+  static int padc_raw[1];
+  ESP_ERROR_CHECK(adc_oneshot_read(adc1_handle, EXAMPLE_ADC1_CHAN0, &padc_raw[0]));
+  return padc_raw[0];
 }

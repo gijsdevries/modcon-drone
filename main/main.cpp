@@ -35,16 +35,13 @@ extern "C" {void app_main(void) {
 
   while (1) {
 
-    adc = read_adc();
-    printf("ADC%d Channel[%d] Raw Data: %d\n", ADC_UNIT_1 + 1, EXAMPLE_ADC1_CHAN0, adc);
-
-
     i++;
-
-    //actual_distance = hc_sr04_measure_cm(sensor);
+    adc = read_adc();
+    actual_distance = hc_sr04_measure_cm(sensor);
     setPWM(i);
 
-    //printf("actual_distance: %f\n", actual_distance);
-    vTaskDelay(1000 / portTICK_PERIOD_MS); 
+    printf("adc: %d   actual_distance: %f\n", adc, actual_distance);
+
+    vTaskDelay(100 / portTICK_PERIOD_MS); 
   }
 }}
