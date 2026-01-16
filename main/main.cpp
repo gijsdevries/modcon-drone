@@ -13,7 +13,6 @@
 #include "uart.h"
 
 extern "C" {void app_main(void) {
-  //TODO add adc read tester
   //TODO add mpu read tester
 
   adc_init();
@@ -37,7 +36,7 @@ extern "C" {void app_main(void) {
 
     i++;
     adc = read_adc();
-    actual_distance = hc_sr04_measure_cm(sensor);
+    actual_distance = (float)hc_sr04_measure_cm(sensor);
     setPWM(i);
 
     printf("adc: %d   actual_distance: %f\n", adc, actual_distance);
