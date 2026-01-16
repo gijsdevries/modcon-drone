@@ -27,19 +27,24 @@ extern "C" {void app_main(void) {
 
   pwm_init();
 
+  setPWM(0);
+  vTaskDelay(5000 / portTICK_PERIOD_MS); 
+
   uint8_t i = 0;
   float actual_distance = 0;
 
   int adc;
 
   while (1) {
+    if (i > 128)
+      i = 0;
 
     i++;
     adc = read_adc();
     actual_distance = (float)hc_sr04_measure_cm(sensor);
     setPWM(i);
 
-    printf("adc: %d   actual_distance: %f\n", adc, actual_distance);
+    printf("adc: %d   actual_distance: %f   pwm: %d\n", adc, actual_distance, i);
 
     vTaskDelay(100 / portTICK_PERIOD_MS); 
   }
