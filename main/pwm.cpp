@@ -3,6 +3,7 @@
 #define FIVE_PERCENT_DUTY_CYCLE (8192 * 0.05)
 #define CHAR_TO_DUTY_CYCLE_FACTOR 1.59
 
+//drone starts spinning at rpm 71,
 void setPWM(float motorspeed) {
   uint16_t duty_cycle = FIVE_PERCENT_DUTY_CYCLE + ((uint8_t)motorspeed * CHAR_TO_DUTY_CYCLE_FACTOR);
 

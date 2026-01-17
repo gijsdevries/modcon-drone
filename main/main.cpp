@@ -5,6 +5,7 @@
 #include "sdkconfig.h"
 #include "esp_log.h"
 #include "hc_sr04.h"
+
 /* USER INCLUDES */
 #include "i2c.h"
 #include "espnow_rec.h"
@@ -30,16 +31,12 @@ extern "C" {void app_main(void) {
   setPWM(0);
   vTaskDelay(5000 / portTICK_PERIOD_MS); 
 
-  uint8_t i = 0;
+  uint8_t i = 75;
   float actual_distance = 0;
 
   int adc;
 
   while (1) {
-    if (i > 128)
-      i = 0;
-
-    i++;
     adc = read_adc();
     actual_distance = (float)hc_sr04_measure_cm(sensor);
     setPWM(i);
