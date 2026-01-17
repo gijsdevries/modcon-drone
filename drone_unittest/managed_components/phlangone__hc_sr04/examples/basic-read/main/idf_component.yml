@@ -1,0 +1,5 @@
+dependencies:
+  phlangone/hc_sr04:
+    registry_url: https://components-staging.espressif.com
+    version: '*'
+description: Example of using the HC-SR04 sensor with ESP-IDF
