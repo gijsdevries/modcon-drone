@@ -18,6 +18,9 @@
 #define MIN_RANGE 0.05
 #define MAX_RANGE 2
 
+#define MAX_PWM 180
+#define MIN_PWM 70
+
 #define BUILTIN_LED (gpio_num_t)2
 #define DEBUG
 
@@ -69,6 +72,7 @@ extern "C" {void app_main(void) {
     switch (operation_state) {
 
       case IDLE: //IDLE
+	//LED blinking fast
 	setPWM(0);
 	gpio_set_level((gpio_num_t)2, led_state);
 	led_state = !led_state; 
@@ -76,9 +80,15 @@ extern "C" {void app_main(void) {
 	break;
 
       case PWM_CONTROL: //PWM RECIEVER
+	//LED ON 
+	gpio_set_level((gpio_num_t)2, 1);
+	setPWM(desired_distance);
+	vTaskDelay((10) / portTICK_PERIOD_MS);
 	break;
 
       case PID_CONTROL: //PID
+	//LED OFF 
+	gpio_set_level((gpio_num_t)2, 0);
 	actual_distance = hc_sr04_measure_cm(sensor);
 
 	if (actual_distance < 0) {
@@ -97,14 +107,12 @@ extern "C" {void app_main(void) {
 
 	  pwm = output;
 
-	  if (pwm > 255)
-	    pwm = 255;
-	  else if (pwm < 1)
-	    pwm = 1;
+	  if (pwm > MAX_PWM)
+	    pwm = MAX_PWM;
+	  else if (pwm < MIN_PWM)
+	    pwm = MIN_PWM;
 
 	  setPWM(pwm);
-
-
 	}
 #ifdef DEBUG
 	static int i = 0;
@@ -118,8 +126,6 @@ extern "C" {void app_main(void) {
 	  pid_struct.actual_distance = actual_distance;
 	  pid_struct.pwm = pwm;
 	  pid_struct.output = output;
-
-	  printf("                distance: %f\n", actual_distance);
 
 	  esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &pid_struct, sizeof(pid_struct));
 
