@@ -27,6 +27,12 @@ enum MSG_TYPE {
   PID_FACTOR,
 };
 
+enum OPERATION_STATE {
+  IDLE,
+  PWM_CONTROL,
+  PID_CONTROL,
+};
+
 typedef struct operation_struct {
   int msg_type;
   uint8_t operation_state;
@@ -128,44 +134,6 @@ void uart_init(void) {
     uart_set_pin(UART_NUM_1, -1, RXD_PIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
 }
 
-static void button_monitor(void *arg) {
-
-  gpio_num_t BUTTON_PIN = (gpio_num_t)4;
-
-  // Configure GPIO
-  gpio_config_t io_conf = {
-    .pin_bit_mask = (1ULL << BUTTON_PIN),   // Select GPIO 4
-    .mode = GPIO_MODE_INPUT,                // Set as input
-    .pull_up_en = GPIO_PULLUP_DISABLE,       // Enable internal pull-up
-    .pull_down_en = GPIO_PULLDOWN_ENABLE,  // Disable pull-down
-    .intr_type = GPIO_INTR_DISABLE          // Disable interrupts
-  };
-  gpio_config(&io_conf);
-
-  while (1) {
-    // Read GPIO level (current state)
-    int level = gpio_get_level(BUTTON_PIN);
-    
-    gpio_set_level((gpio_num_t)2, operation_state);
-
-    if (level == 1) {
-      operation_state = !operation_state;
-      gpio_set_level((gpio_num_t)2, operation_state);
-
-      myOpState.operation_state = operation_state;
-
-      esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myOpState, sizeof(myOpState));
-      if (result == ESP_OK) {
-        printf("operation state send succes: %d ", myOpState.operation_state);
-      }
-      else {
-        printf("operation state send fail: %d ", myOpState.operation_state);
-      }
-    }
-    vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay 200ms
-  }
-}
-
 static void rx_task(void *arg) {
   uint16_t char_distance;
 
@@ -204,19 +172,20 @@ static void rx_task(void *arg) {
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &my_pid_factor, sizeof(my_pid_factor));
         printf("updated pid factors kp=%f, ki=%f, kd=%f  ", my_pid_factor.kp,my_pid_factor.ki,my_pid_factor.kd);
       }
-      else if (data[0] == 'q') {
-        operation_state = !operation_state;
-        gpio_set_level((gpio_num_t)2, operation_state);
-
-        myOpState.operation_state = operation_state;
-
+      else if (data[0] == 'z') {
+        myOpState.operation_state = IDLE;
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myOpState, sizeof(myOpState));
-        if (result == ESP_OK) {
-          printf("operation state send succes: %d ", myOpState.operation_state);
-        }
-        else {
-          printf("operation state send fail: %d ", myOpState.operation_state);
-        }   
+	printf("operation state now IDLE\n");
+      }
+      else if (data[0] == 'x') {
+        myOpState.operation_state = PWM_CONTROL;
+        esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myOpState, sizeof(myOpState));
+	printf("operation state now PWM_CONTROL\n");
+      }
+      else if (data[0] == 'c') {
+        myOpState.operation_state = PID_CONTROL;
+        esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myOpState, sizeof(myOpState));
+	printf("operation state now PID_CONTROL\n");
       }
       else {
         char_distance = atoi(data);
@@ -244,7 +213,7 @@ static void rx_task(void *arg) {
 
 extern "C" {void app_main(void)
   {
-    operation_state = false;
+    operation_state = IDLE;
     uint8_t mac_addr[6]; // Buffer for the MAC address
 
     // Initialize NVS
@@ -297,4 +266,30 @@ extern "C" {void app_main(void)
 
     gpio_reset_pin((gpio_num_t)2);
     gpio_set_direction((gpio_num_t)2, GPIO_MODE_OUTPUT);
+
+    bool led_state = false;
+
+    while (1)
+    {
+      switch (myOpState.operation_state) {
+
+	case IDLE: //IDLE
+		   //LED blinking fast
+	  gpio_set_level((gpio_num_t)2, led_state);
+	  led_state = !led_state; 
+	  vTaskDelay(100 / portTICK_PERIOD_MS);
+	  break;
+
+	case PWM_CONTROL: //PWM RECIEVER
+			  //LED ON 
+	  gpio_set_level((gpio_num_t)2, 1);
+	  break;
+
+	case PID_CONTROL: //PID
+			  //LED OFF 
+	  gpio_set_level((gpio_num_t)2, 0);
+	  break;
+      }
+      vTaskDelay(10 / portTICK_PERIOD_MS);
+    }
   }}

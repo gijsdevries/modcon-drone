@@ -27,8 +27,6 @@
 //TODO read out adc and send with espnow
 //TODO read out mpu and send with espnow
 //TODO add csv logging file for data
-//TODO make pwm rec and pid control custamisable via controller
-//TODO clean up messy ahh code
 
 float error, error_sum, error_div, error_prev, desired_distance, actual_distance, pwm, output;
 uint8_t operation_state;
