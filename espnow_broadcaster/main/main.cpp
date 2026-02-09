@@ -29,7 +29,7 @@ enum MSG_TYPE {
 
 typedef struct operation_struct {
   int msg_type;
-  bool operation_state;
+  uint8_t operation_state;
 } operation_struct;
 
 typedef struct struct_message {
@@ -63,7 +63,7 @@ operation_struct myOpState;
 esp_now_peer_info_t peerInfo;
 pid_factor my_pid_factor;
   
-static bool operation_state;
+static uint8_t operation_state;
 
 // callback when data is sent
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {

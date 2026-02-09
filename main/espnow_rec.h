@@ -17,6 +17,12 @@ enum MSG_TYPE {
   PID_FACTOR,
 };
 
+enum OPERATION_STATE {
+  IDLE,
+  PWM_CONTROL,
+  PID_CONTROL,
+};
+
 typedef struct distance_struct {
   uint8_t msg_type;
   float distance;
@@ -24,7 +30,7 @@ typedef struct distance_struct {
 
 typedef struct operation_struct {
   uint8_t msg_type;
-  bool operation_state;
+  uint8_t operation_state;
 } operation_struct;
 
 typedef struct pid_struct {
@@ -47,7 +53,7 @@ typedef struct pid_factor {
 } pid_factor;
 
 extern float desired_distance;
-extern bool operation_state;
+extern uint8_t operation_state;
 extern uint8_t broadcastAddress[];
 
 extern float kp;
