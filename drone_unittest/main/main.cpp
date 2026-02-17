@@ -31,17 +31,16 @@ extern "C" {void app_main(void) {
   setPWM(0);
   vTaskDelay(5000 / portTICK_PERIOD_MS); 
 
-  uint8_t i = 75;
+  uint8_t motor_pwm = 75;
   float actual_distance = 0;
-
   int adc;
 
   while (1) {
     adc = read_adc();
     actual_distance = (float)hc_sr04_measure_cm(sensor);
-    setPWM(i);
+    setPWM(motor_pwm);
 
-    printf("adc: %d   actual_distance: %f   pwm: %d\n", adc, actual_distance, i);
+    printf("adc: %d   actual_distance: %f   pwm: %d\n", adc, actual_distance, motor_pwm);
 
     vTaskDelay(100 / portTICK_PERIOD_MS); 
   }
