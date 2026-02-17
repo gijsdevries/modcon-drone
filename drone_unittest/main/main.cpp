@@ -7,11 +7,8 @@
 #include "hc_sr04.h"
 
 /* USER INCLUDES */
-#include "i2c.h"
-#include "espnow_rec.h"
 #include "pwm.h"
 #include "adc.h"
-#include "uart.h"
 
 extern "C" {void app_main(void) {
   //TODO add mpu read tester
