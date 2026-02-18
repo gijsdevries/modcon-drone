@@ -34,12 +34,12 @@ enum OPERATION_STATE {
 };
 
 typedef struct operation_struct {
-  int msg_type;
+  uint8_t msg_type;
   uint8_t operation_state;
 } operation_struct;
 
 typedef struct struct_message {
-  int msg_type;
+  uint8_t msg_type;
   float distance;
 } struct_message;
 
