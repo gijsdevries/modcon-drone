@@ -17,8 +17,8 @@
 
 /// ------------------------------ ESPNOW ------------------------------ /// 
 
-// REPLACE WITH YOUR RECEIVER MAC Address
-uint8_t broadcastAddress[] = {0x80, 0xF3, 0xDA, 0x55, 0x9B, 0x00};
+//TODO maybe update mac adress?
+uint8_t broadcastAddress[] = {0x88, 0x57, 0x21, 0x78, 0xaa, 0x80};
 
 enum MSG_TYPE {
   DISTANCE,
@@ -173,8 +173,11 @@ static void rx_task(void *arg) {
         printf("updated pid factors kp=%f, ki=%f, kd=%f  ", my_pid_factor.kp,my_pid_factor.ki,my_pid_factor.kd);
       }
       else if (data[0] == 'z') {
-        myOpState.operation_state = IDLE;
-        esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myOpState, sizeof(myOpState));
+	pid_factor test_pid_struct;
+	test_pid_struct.msg_type = OPERATION;
+	test_pid_struct.kp = 67;
+	
+        esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &test_pid_struct, sizeof(test_pid_struct));
 	printf("operation state now IDLE\n");
       }
       else if (data[0] == 'x') {

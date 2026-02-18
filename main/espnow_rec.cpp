@@ -2,11 +2,13 @@
 
 esp_now_peer_info_t peerInfo;
 
+//TODO maybe update mac address?
 uint8_t broadcastAddress[] = {0x80, 0xF3, 0xDA, 0x54, 0x18, 0x38};
 
 // callback function that will be executed when data is received
 void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
 
+  uint8_t op_state_test = 0;
   uint8_t msg_type = incomingData[0];
 
   switch (msg_type) {
@@ -21,9 +23,12 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
 
     case OPERATION:
       //TODO operation states can get out of sync
-      operation_state = incomingData[1];
+      static operation_struct recOp;
+      memcpy(&recOp, incomingData, sizeof(recOp));
+      op_state_test = recOp.operation_state;
+
 #ifdef ESP_NOW_DEBUG
-      printf("recieved operation_state: %d\n", operation_state);
+      printf("recieved operation_state: %d\n", recOp.operation_state);
 #endif
       break;
 
@@ -62,7 +67,7 @@ void example_wifi_init(void) {
 }
 
 void esp_now_full_init() {
-  
+
   // Initialize NVS
   esp_err_t ret = nvs_flash_init();
   if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
