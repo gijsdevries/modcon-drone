@@ -173,13 +173,8 @@ static void rx_task(void *arg) {
         printf("updated pid factors kp=%f, ki=%f, kd=%f  ", my_pid_factor.kp,my_pid_factor.ki,my_pid_factor.kd);
       }
       else if (data[0] == 'z') {
-	pid_factor test_pid_struct;
-	test_pid_struct.msg_type = OPERATION;
-	test_pid_struct.kp = 0;
-	test_pid_struct.ki = 0;
-	test_pid_struct.kd = 0;
-	
-        esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &test_pid_struct, sizeof(test_pid_struct));
+	myOpState.operation_state = IDLE;
+        esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myOpState, sizeof(myOpState));
 	printf("operation state now IDLE\n");
       }
       else if (data[0] == 'x') {
