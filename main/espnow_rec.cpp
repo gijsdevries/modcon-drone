@@ -23,15 +23,11 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
 
     case OPERATION:
       //TODO operation states can get out of sync
-      static operation_struct recOp;
-      memcpy(&recOp, incomingData, sizeof(recOp));
-      op_state_test = recOp.operation_state;
-
+      operation_state = incomingData[1];
 #ifdef ESP_NOW_DEBUG
-      printf("recieved operation_state: %d\n", recOp.operation_state);
+      printf("recieved operation_state: %d\n", operation_state);
 #endif
-      break;
-
+      break; 
     case PID_FACTOR:
       static pid_factor recPID;
       memcpy(&recPID, incomingData, sizeof(recPID));
