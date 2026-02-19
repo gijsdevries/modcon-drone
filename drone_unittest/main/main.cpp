@@ -33,6 +33,10 @@ extern "C" {void app_main(void) {
   int adc;
 
   while (1) {
+    motor_pwm++;
+    if (motor_pwm > 140)
+      motor_pwm = 75;
+
     adc = read_adc();
     actual_distance = (float)hc_sr04_measure_cm(sensor);
     setPWM(motor_pwm);

@@ -18,8 +18,8 @@
 #define MIN_RANGE 0.05
 #define MAX_RANGE 2
 
-#define MAX_PWM 180
-#define MIN_PWM 70
+#define MAX_PWM 140
+#define MIN_PWM 80
 
 #define BUILTIN_LED (gpio_num_t)2
 #define DEBUG
@@ -94,8 +94,6 @@ extern "C" {void app_main(void) {
 	}
 	else {
 	  actual_distance /= 100; //cm to meter
-	  if (actual_distance < MIN_RANGE || actual_distance > MAX_RANGE)
-	    actual_distance = MIN_RANGE;
 
 	  error = desired_distance - actual_distance;
 	  error_sum += error * dT;
