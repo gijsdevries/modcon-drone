@@ -24,7 +24,6 @@
 
 //TODO read out adc and send with espnow
 //TODO read out mpu and send with espnow
-//TODO add csv logging file for data
 
 //global variables
 float error, error_sum, error_div, error_prev, desired_distance, actual_distance, pwm, output;
@@ -83,7 +82,7 @@ extern "C" {void app_main(void) {
 	gpio_set_level((gpio_num_t)2, 1);
 	setPWM(desired_distance);
 
-	//TODO espnow communication
+	//TODO test espnow communication
 #ifdef DEBUG
 	debug_counter++;
 	if (debug_counter > DEBUG_PRINT_INTERVAL) {

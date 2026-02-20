@@ -2,7 +2,6 @@
 
 esp_now_peer_info_t peerInfo;
 
-//TODO maybe update mac address?
 uint8_t broadcastAddress[] = {0x88, 0x57, 0x21, 0x7a, 0xb1, 0x48};
 
 // callback function that will be executed when data is received
@@ -22,7 +21,6 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
       break;
 
     case OPERATION:
-      //TODO operation states can get out of sync
       operation_state = incomingData[1];
 #ifdef ESP_NOW_DEBUG
       printf("recieved operation_state: %d\n", operation_state);

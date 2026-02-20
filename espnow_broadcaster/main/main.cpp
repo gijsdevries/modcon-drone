@@ -15,9 +15,10 @@
 #define ESPNOW_WIFI_MODE WIFI_MODE_STA
 #define ESPNOW_WIFI_IF   WIFI_IF_STA
 
+//TODO add csv file for logging
+
 /// ------------------------------ ESPNOW ------------------------------ /// 
 
-//TODO maybe update mac adress?
 uint8_t broadcastAddress[] = {0x80, 0xF3, 0xDA, 0x55, 0x9B, 0x00};
 
 enum MSG_TYPE {
