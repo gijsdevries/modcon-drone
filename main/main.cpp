@@ -97,7 +97,7 @@ extern "C" {void app_main(void) {
 	else if (pwm < MIN_PWM)
 	  pwm = MIN_PWM;
 
-	printf("pwm_rec pwm: %0.1f", pwm);
+	printf("pwm_rec pwm: %0.1f\n", pwm);
 	setPWM(pwm);
 
 	vTaskDelay((10) / portTICK_PERIOD_MS);
@@ -152,7 +152,7 @@ extern "C" {void app_main(void) {
 	  else if (pwm < MIN_PWM)
 	    pwm = MIN_PWM;
 
-	  printf("pwm_rec pwm: %0.1f", pwm);
+	  printf("pwm_rec pwm: %0.1f\n", pwm);
 	  setPWM(pwm);
 	}
 #ifdef DEBUG
