@@ -19,6 +19,8 @@
 #define MAX_PWM 140
 #define MIN_PWM 80
 
+#define PWM_SLOPE 10
+
 #define BUILTIN_LED (gpio_num_t)2
 #define DEBUG
 
@@ -26,7 +28,7 @@
 //TODO read out mpu and send with espnow
 
 //global variables
-float error, error_sum, error_div, error_prev, desired_distance, actual_distance, pwm, output;
+float error, error_sum, error_div, error_prev, desired_distance, actual_distance, pwm, pwm_prev, output;
 float kp, ki, kd;
 uint8_t operation_state;
 
@@ -113,15 +115,20 @@ extern "C" {void app_main(void) {
 	  actual_distance = -1;
 	}
 	else {
-	  actual_distance /= 100; //cm to meter
-
 	  error = desired_distance - actual_distance;
 	  error_sum += error * dT;
 	  error_div = (error - error_prev) / dT;
 	  output = error * kp + error_sum * ki + error_div * kd;
 	  error_prev = error;
 
+	  pwm_prev = pwm;
 	  pwm = output;
+
+	  //TEST if pwm_slope code works
+	  if ((pwm - pwm_prev) > PWM_SLOPE)
+	    pwm = pwm_prev + PWM_SLOPE;
+	  else if ((pwm - pwm_prev) < PWM_SLOPE)
+	    pwm = pwm_prev - PWM_SLOPE;
 
 	  if (pwm > MAX_PWM)
 	    pwm = MAX_PWM;
