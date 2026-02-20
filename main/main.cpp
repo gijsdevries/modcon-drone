@@ -82,7 +82,7 @@ extern "C" {void app_main(void) {
 	gpio_set_level((gpio_num_t)2, 1);
 	setPWM(desired_distance);
 
-	//TODO test espnow communication
+	//TEST espnow communication
 #ifdef DEBUG
 	debug_counter++;
 	if (debug_counter > DEBUG_PRINT_INTERVAL) {
