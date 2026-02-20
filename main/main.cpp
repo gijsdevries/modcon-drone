@@ -19,7 +19,7 @@
 #define MAX_PWM 140
 #define MIN_PWM 80
 
-#define PWM_SLOPE 10
+#define PWM_SLOPE 1
 
 #define BUILTIN_LED (gpio_num_t)2
 #define DEBUG
@@ -43,7 +43,7 @@ extern "C" {void app_main(void) {
   ki = 0.10;
   kd = 0.10;
 
-  desired_distance = 0.3;
+  desired_distance = 30.0;
 
   //used for sending pid data to controller
   pid_struct pid_struct;
@@ -82,27 +82,44 @@ extern "C" {void app_main(void) {
       case PWM_CONTROL: //PWM RECIEVER
 	//LED ON 
 	gpio_set_level((gpio_num_t)2, 1);
-	setPWM(desired_distance);
 
-	//TEST espnow communication
+	pwm_prev = pwm;
+	pwm = desired_distance;
+
+	//TODO TEST if pwm_slope code works
+	if ((pwm - pwm_prev) > PWM_SLOPE)
+	  pwm = pwm_prev + PWM_SLOPE;
+	else if ((pwm - pwm_prev) < -PWM_SLOPE)
+	  pwm = pwm_prev - PWM_SLOPE;
+
+	if (pwm > MAX_PWM)
+	  pwm = MAX_PWM;
+	else if (pwm < MIN_PWM)
+	  pwm = MIN_PWM;
+
+	printf("pwm_rec pwm: %0.1f", pwm);
+	setPWM(pwm);
+
+	vTaskDelay((10) / portTICK_PERIOD_MS);
+	
+	//TODO TEST espnow communication
 #ifdef DEBUG
 	debug_counter++;
-	if (debug_counter > DEBUG_PRINT_INTERVAL) {
+	if (debug_counter > DEBUG_PRINT_INTERVAL) 
+	{
 	  pid_struct.desired_distance = desired_distance;
 	  pid_struct.actual_distance = hc_sr04_measure_cm(sensor);
 
 	  esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &pid_struct, sizeof(pid_struct));
 
-	  if (result == ESP_OK) {
+	  if (result == ESP_OK) 
 	    printf("PID debug info send succes");
-	  }
-	  else {
+	  else
 	    printf("PID debug info send fail");
-	  }
+
 	  debug_counter = 0;
 	} 
 #endif	
-
 	vTaskDelay((10) / portTICK_PERIOD_MS);
 	break;
 
@@ -124,10 +141,10 @@ extern "C" {void app_main(void) {
 	  pwm_prev = pwm;
 	  pwm = output;
 
-	  //TEST if pwm_slope code works
+	  //TODO TEST if pwm_slope code works
 	  if ((pwm - pwm_prev) > PWM_SLOPE)
 	    pwm = pwm_prev + PWM_SLOPE;
-	  else if ((pwm - pwm_prev) < PWM_SLOPE)
+	  else if ((pwm - pwm_prev) < -PWM_SLOPE)
 	    pwm = pwm_prev - PWM_SLOPE;
 
 	  if (pwm > MAX_PWM)
@@ -135,6 +152,7 @@ extern "C" {void app_main(void) {
 	  else if (pwm < MIN_PWM)
 	    pwm = MIN_PWM;
 
+	  printf("pwm_rec pwm: %0.1f", pwm);
 	  setPWM(pwm);
 	}
 #ifdef DEBUG
