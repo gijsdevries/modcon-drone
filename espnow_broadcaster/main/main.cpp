@@ -19,7 +19,11 @@
 
 /// ------------------------------ ESPNOW ------------------------------ /// 
 
-uint8_t broadcastAddress[] = {0x80, 0xF3, 0xDA, 0x55, 0x9B, 0x00};
+//drone esp
+//uint8_t broadcastAddress[] = {0x80, 0xF3, 0xDA, 0x55, 0x9B, 0x00};
+
+//random esp at home
+uint8_t broadcastAddress[] = {0x88, 0x57, 0x21, 0x78, 0xaa, 0x80};
 
 enum MSG_TYPE {
   DISTANCE,

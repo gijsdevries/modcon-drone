@@ -86,26 +86,29 @@ extern "C" {void app_main(void) {
 	pwm_prev = pwm;
 	pwm = desired_distance;
 
-	//TODO TEST if pwm_slope code works
 	if ((pwm - pwm_prev) > PWM_SLOPE)
+	{
 	  pwm = pwm_prev + PWM_SLOPE;
+	  vTaskDelay((100) / portTICK_PERIOD_MS);
+	} 
 	else if ((pwm - pwm_prev) < -PWM_SLOPE)
+	{
 	  pwm = pwm_prev - PWM_SLOPE;
+	  vTaskDelay((100) / portTICK_PERIOD_MS);
+	}
 
 	if (pwm > MAX_PWM)
 	  pwm = MAX_PWM;
 	else if (pwm < MIN_PWM)
 	  pwm = MIN_PWM;
 
-	printf("pwm_rec pwm: %0.1f\n", pwm);
 	setPWM(pwm);
 
 	vTaskDelay((10) / portTICK_PERIOD_MS);
-	
-	//TODO TEST espnow communication
+
 #ifdef DEBUG
 	debug_counter++;
-	if (debug_counter > DEBUG_PRINT_INTERVAL) 
+	if (debug_counter > DEBUG_PRINT_INTERVAL / 10) 
 	{
 	  pid_struct.desired_distance = desired_distance;
 	  pid_struct.actual_distance = hc_sr04_measure_cm(sensor);
@@ -141,18 +144,22 @@ extern "C" {void app_main(void) {
 	  pwm_prev = pwm;
 	  pwm = output;
 
-	  //TODO TEST if pwm_slope code works
 	  if ((pwm - pwm_prev) > PWM_SLOPE)
+	  {
 	    pwm = pwm_prev + PWM_SLOPE;
+	    vTaskDelay((100) / portTICK_PERIOD_MS);
+	  } 
 	  else if ((pwm - pwm_prev) < -PWM_SLOPE)
+	  {
 	    pwm = pwm_prev - PWM_SLOPE;
+	    vTaskDelay((100) / portTICK_PERIOD_MS);
+	  }
 
 	  if (pwm > MAX_PWM)
 	    pwm = MAX_PWM;
 	  else if (pwm < MIN_PWM)
 	    pwm = MIN_PWM;
 
-	  printf("pwm_rec pwm: %0.1f\n", pwm);
 	  setPWM(pwm);
 	}
 #ifdef DEBUG
@@ -175,6 +182,7 @@ extern "C" {void app_main(void) {
 	  else {
 	    printf("PID debug info send fail");
 	  }
+
 	  debug_counter = 0;
 	} 
 	vTaskDelay(dT*1000 / portTICK_PERIOD_MS);
