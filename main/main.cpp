@@ -16,7 +16,8 @@
 #define dT 0.01
 #define DEBUG_PRINT_INTERVAL 250
 
-#define MAX_PWM 140
+//TODO calibrate max and min PWM
+#define MAX_PWM 200
 #define MIN_PWM 80
 
 #define PWM_SLOPE 1
@@ -108,7 +109,7 @@ extern "C" {void app_main(void) {
 
 #ifdef DEBUG
 	debug_counter++;
-	if (debug_counter > DEBUG_PRINT_INTERVAL / 10) 
+	if (debug_counter > DEBUG_PRINT_INTERVAL) 
 	{
 	  pid_struct.desired_distance = desired_distance;
 	  pid_struct.actual_distance = hc_sr04_measure_cm(sensor);
