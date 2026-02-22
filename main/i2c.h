@@ -10,7 +10,7 @@
 #define I2C_MASTER_NUM              I2C_NUM_0                   /*!< I2C port number for master dev */
 #define I2C_MASTER_FREQ_HZ          400000                      /*!< I2C master clock frequency */
 #define I2C_MASTER_TIMEOUT_MS       10000
-#define MPU9250_SENSOR_ADDR         0x29                       /*!< Address of sensor */
+#define VL6180_SENSOR_ADDR         0x29                       /*!< Address of sensor */
 
 extern i2c_master_dev_handle_t dev_handle;
 extern i2c_master_bus_handle_t bus_handle;

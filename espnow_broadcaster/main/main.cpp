@@ -15,10 +15,15 @@
 #define ESPNOW_WIFI_MODE WIFI_MODE_STA
 #define ESPNOW_WIFI_IF   WIFI_IF_STA
 
+//TODO add csv file for logging
+
 /// ------------------------------ ESPNOW ------------------------------ /// 
 
-//TODO maybe update mac adress?
-uint8_t broadcastAddress[] = {0x88, 0x57, 0x21, 0x78, 0xaa, 0x80};
+//drone esp
+uint8_t broadcastAddress[] = {0x80, 0xF3, 0xDA, 0x55, 0x9B, 0x00};
+
+//random esp at home
+//uint8_t broadcastAddress[] = {0x88, 0x57, 0x21, 0x78, 0xaa, 0x80};
 
 enum MSG_TYPE {
   DISTANCE,
