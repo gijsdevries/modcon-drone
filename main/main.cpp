@@ -5,6 +5,7 @@
 #include "sdkconfig.h"
 #include "esp_log.h"
 #include "hc_sr04.h"
+#include "esp_timer.h"
 
 /* USER INCLUDES */
 #include "i2c.h"
@@ -14,7 +15,7 @@
 #include "uart.h"
 
 #define dT 0.01
-#define DEBUG_PRINT_INTERVAL 250
+#define DEBUG_PRINT_INTERVAL 1000
 
 //TODO calibrate max and min PWM
 #define MAX_PWM 200
@@ -36,7 +37,8 @@ uint8_t operation_state;
 extern "C" {void app_main(void) {
   bool led_state = false;
 
-  operation_state = IDLE;
+  //TODO CHANGE THIS BACK TO IDLE
+  operation_state = PID_CONTROL;
 
   int debug_counter = 0;
 
@@ -67,7 +69,8 @@ extern "C" {void app_main(void) {
 
   //init the motor
   setPWM(0);
-  vTaskDelay(3000 / portTICK_PERIOD_MS);
+  //TODO get this back
+  //vTaskDelay(3000 / portTICK_PERIOD_MS);
 
   while (1) {
     switch (operation_state) {
@@ -107,7 +110,7 @@ extern "C" {void app_main(void) {
       case PID_CONTROL: //PID
 			//LED OFF 
 	gpio_set_level((gpio_num_t)2, 0);
-	actual_distance = hc_sr04_measure_cm(sensor);
+	//actual_distance = hc_sr04_measure_cm(sensor);
 
 	if (actual_distance < 0) {
 	  actual_distance = -1;
@@ -142,7 +145,12 @@ extern "C" {void app_main(void) {
 	}
 #ifdef DEBUG
 	debug_counter++;
-	if (debug_counter > DEBUG_PRINT_INTERVAL) {
+	if (debug_counter > DEBUG_PRINT_INTERVAL / 136)
+	{
+	  int64_t time = esp_timer_get_time() / 1000; //display in ms
+	  printf("time since running: %lld\n", time);
+
+	  /*
 	  pid_struct.error = error;
 	  pid_struct.error_sum = error_sum;
 	  pid_struct.error_div = error_div;
@@ -152,14 +160,15 @@ extern "C" {void app_main(void) {
 	  pid_struct.pwm = pwm;
 	  pid_struct.output = output;
 
-	  esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &pid_struct, sizeof(pid_struct));
+	  //esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &pid_struct, sizeof(pid_struct));
 
 	  if (result == ESP_OK) {
-	    printf("PID debug info send succes");
+	    printf("PID debug info send succes\n");
 	  }
 	  else {
-	    printf("PID debug info send fail");
+	    printf("SENDING NOW PID debug info send fail\n");
 	  }
+	  */
 
 	  debug_counter = 0;
 	} 
@@ -167,6 +176,6 @@ extern "C" {void app_main(void) {
 #endif	
 	break;
     }
-    vTaskDelay(1 / portTICK_PERIOD_MS);
+    //vTaskDelay(1 / portTICK_PERIOD_MS);
   }
 }}
