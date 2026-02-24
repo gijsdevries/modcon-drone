@@ -92,11 +92,6 @@ extern "C" {void app_main(void) {
 	  pwm = pwm_prev + PWM_SLOPE;
 	  vTaskDelay((100) / portTICK_PERIOD_MS);
 	} 
-	else if ((pwm - pwm_prev) < -PWM_SLOPE)
-	{
-	  pwm = pwm_prev - PWM_SLOPE;
-	  vTaskDelay((100) / portTICK_PERIOD_MS);
-	}
 
 	if (pwm > MAX_PWM)
 	  pwm = MAX_PWM;
