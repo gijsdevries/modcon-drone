@@ -176,6 +176,5 @@ extern "C" {void app_main(void) {
 #endif	
 	break;
     }
-    //vTaskDelay(1 / portTICK_PERIOD_MS);
   }
 }}

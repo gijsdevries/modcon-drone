@@ -34,6 +34,7 @@ typedef struct operation_struct {
 } operation_struct;
 
 typedef struct pid_struct {
+  int64_t time;
   uint8_t msg_type;
   float error; 
   float error_sum;
