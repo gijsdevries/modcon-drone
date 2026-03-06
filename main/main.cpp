@@ -15,7 +15,7 @@
 #include "uart.h"
 
 #define dT 0.01
-#define DEBUG_PRINT_INTERVAL 5000 //send every 5s
+#define DEBUG_PRINT_INTERVAL 1000 //sending debug info in ms
 
 #define MAX_PWM 250
 #define MIN_PWM 80
