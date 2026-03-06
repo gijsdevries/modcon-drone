@@ -38,7 +38,7 @@ extern "C" {void app_main(void) {
   //TODO CHANGE THIS BACK TO IDLE
   operation_state = IDLE;
 
-  int debug_counter = 1;
+  int debug_counter = 0;
   int64_t time = 0; //time since running in ms
 
   kp = 0.10;
@@ -107,7 +107,6 @@ extern "C" {void app_main(void) {
 	if (time > DEBUG_PRINT_INTERVAL * debug_counter)
 	{
 	  debug_counter++;
-
 	  pid_struct.time = time;
 	  pid_struct.error = error;
 	  pid_struct.error_sum = error_sum;
@@ -119,11 +118,10 @@ extern "C" {void app_main(void) {
 	  pid_struct.output = output;
 
 	  esp_now_send(broadcastAddress, (uint8_t *) &pid_struct, sizeof(pid_struct));
-	  printf("Sending PWM info ");
-
-	  }
-	vTaskDelay(10 / portTICK_PERIOD_MS);
+	  printf("pwm debug info send succes ");
+	}
 #endif
+	vTaskDelay(dT*1000 / portTICK_PERIOD_MS);
 	break;
 
       case PID_CONTROL: //PID LED OFF
@@ -144,6 +142,7 @@ extern "C" {void app_main(void) {
 	  pwm_prev = pwm;
 	  pwm = output;
 
+	  pwm = -10;
 	  if ((pwm - pwm_prev) > PWM_SLOPE)
 	  {
 	    pwm = pwm_prev + PWM_SLOPE;
@@ -162,12 +161,12 @@ extern "C" {void app_main(void) {
 
 	  setPWM(pwm);
 	}
+
 #ifdef DEBUG
 	time = esp_timer_get_time() / 1000; //display in ms
 	if (time > DEBUG_PRINT_INTERVAL * debug_counter)
 	{
 	  debug_counter++;
-
 	  pid_struct.time = time;
 	  pid_struct.error = error;
 	  pid_struct.error_sum = error_sum;
