@@ -101,9 +101,31 @@ extern "C" {void app_main(void) {
 	  pwm = MIN_PWM;
 
 	setPWM(pwm);
+#ifdef DEBUG
+	debug_counter++;
+	if (debug_counter > DEBUG_PRINT_INTERVAL) {
+	  pid_struct.error = error;
+	  pid_struct.error_sum = error_sum;
+	  pid_struct.error_div = error_div;
+	  pid_struct.error_prev = error_prev;
+	  pid_struct.desired_distance = desired_distance;
+	  pid_struct.actual_distance = actual_distance;
+	  pid_struct.pwm = pwm;
+	  pid_struct.output = output;
 
+	  esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &pid_struct, sizeof(pid_struct));
+
+	  if (result == ESP_OK) {
+	    printf("pwm debug info send succes");
+	  }
+	  else {
+	    printf("pwm debug info send fail");
+	  }
+
+	  debug_counter = 0;
+	} 
 	vTaskDelay((10) / portTICK_PERIOD_MS);
-
+#endif	
 	break;
 
       case PID_CONTROL: //PID
