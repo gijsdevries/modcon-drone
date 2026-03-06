@@ -17,8 +17,7 @@
 #define dT 0.01
 #define DEBUG_PRINT_INTERVAL 1000
 
-//TODO calibrate max and min PWM
-#define MAX_PWM 200
+#define MAX_PWM 250
 #define MIN_PWM 80
 
 #define PWM_SLOPE 1
