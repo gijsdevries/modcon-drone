@@ -15,7 +15,7 @@
 #include "uart.h"
 
 #define dT 0.01
-#define DEBUG_PRINT_INTERVAL 5000
+#define DEBUG_PRINT_INTERVAL 5000 //send every 5s
 
 #define MAX_PWM 250
 #define MIN_PWM 80
@@ -36,9 +36,10 @@ extern "C" {void app_main(void) {
   bool led_state = false;
 
   //TODO CHANGE THIS BACK TO IDLE
-  operation_state = PID_CONTROL;
+  operation_state = PWM_CONTROL;
 
   int debug_counter = 1;
+  int64_t time = 0; //time since running in ms
 
   kp = 0.10;
   ki = 0.10;
@@ -102,8 +103,12 @@ extern "C" {void app_main(void) {
 	setPWM(pwm);
 
 #ifdef DEBUG
-	debug_counter++;
-	if (debug_counter > DEBUG_PRINT_INTERVAL) {
+	time = esp_timer_get_time() / 1000; //display in ms
+	if (time > DEBUG_PRINT_INTERVAL * debug_counter)
+	{
+	  debug_counter++;
+
+	  pid_struct.time = time;
 	  pid_struct.error = error;
 	  pid_struct.error_sum = error_sum;
 	  pid_struct.error_div = error_div;
@@ -113,24 +118,17 @@ extern "C" {void app_main(void) {
 	  pid_struct.pwm = pwm;
 	  pid_struct.output = output;
 
-	  esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &pid_struct, sizeof(pid_struct));
+	  esp_now_send(broadcastAddress, (uint8_t *) &pid_struct, sizeof(pid_struct));
+	  printf("Sending PWM info ");
 
-	  if (result == ESP_OK) {
-	    printf("pwm debug info send succes");
 	  }
-	  else {
-	    printf("pwm debug info send fail");
-	  }
-
-	  debug_counter = 0;
-	} 
-	vTaskDelay((10) / portTICK_PERIOD_MS);
-#endif	
+	vTaskDelay(10 / portTICK_PERIOD_MS);
+#endif
 	break;
 
-      case PID_CONTROL: //PID
-			//LED OFF 
+      case PID_CONTROL: //PID LED OFF
 	gpio_set_level((gpio_num_t)2, 0);
+	//TODO change back
 	//actual_distance = hc_sr04_measure_cm(sensor);
 
 	if (actual_distance < 0) {
@@ -165,13 +163,12 @@ extern "C" {void app_main(void) {
 	  setPWM(pwm);
 	}
 #ifdef DEBUG
-	int64_t time = esp_timer_get_time() / 1000; //display in ms
+	time = esp_timer_get_time() / 1000; //display in ms
 	if (time > DEBUG_PRINT_INTERVAL * debug_counter)
 	{
 	  debug_counter++;
-	  printf("time since running: %lld\n", time);
 
-	  /*
+	  pid_struct.time = time;
 	  pid_struct.error = error;
 	  pid_struct.error_sum = error_sum;
 	  pid_struct.error_div = error_div;
@@ -181,19 +178,13 @@ extern "C" {void app_main(void) {
 	  pid_struct.pwm = pwm;
 	  pid_struct.output = output;
 
-	  //esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &pid_struct, sizeof(pid_struct));
-
-	  if (result == ESP_OK) {
-	    printf("PID debug info send succes\n");
-	  }
-	  else {
-	    printf("SENDING NOW PID debug info send fail\n");
-	  }
-	  */
-	} 
+	  esp_now_send(broadcastAddress, (uint8_t *) &pid_struct, sizeof(pid_struct));
+	  printf("PID debug info send succes\n");
+	}
+#endif
 	vTaskDelay(dT*1000 / portTICK_PERIOD_MS);
-#endif	
 	break;
     }
-  }
+    vTaskDelay(1 / portTICK_PERIOD_MS);
+  } 
 }}
