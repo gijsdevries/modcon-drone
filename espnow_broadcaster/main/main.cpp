@@ -15,8 +15,7 @@
 #define ESPNOW_WIFI_MODE WIFI_MODE_STA
 #define ESPNOW_WIFI_IF   WIFI_IF_STA
 
-//#define CSV_LOG
-//TODO add csv file for logging
+#define CSV_LOG
 
 /// ------------------------------ ESPNOW ------------------------------ /// 
 
@@ -102,7 +101,6 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
       static pid_struct rec_pid;
       memcpy(&rec_pid, incomingData, sizeof(rec_pid));
 
-      //TODO test this
 #ifdef CSV_LOG
       printf("%lld, %f, %f, %f, %f, %f, %f, %f, %f\n", rec_pid.time, rec_pid.error, rec_pid.error_sum, rec_pid.error_div, rec_pid.error_prev, rec_pid.desired_distance, rec_pid.actual_distance, rec_pid.pwm, rec_pid.output);
       //print in csv format

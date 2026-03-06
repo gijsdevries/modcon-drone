@@ -68,8 +68,7 @@ extern "C" {void app_main(void) {
 
   //init the motor
   setPWM(0);
-  //TODO get this back
-  //vTaskDelay(3000 / portTICK_PERIOD_MS);
+  vTaskDelay(3000 / portTICK_PERIOD_MS);
 
   while (1) {
     switch (operation_state) {
@@ -126,8 +125,7 @@ extern "C" {void app_main(void) {
 
       case PID_CONTROL: //PID LED OFF
 	gpio_set_level((gpio_num_t)2, 0);
-	//TODO change back
-	//actual_distance = hc_sr04_measure_cm(sensor);
+	actual_distance = hc_sr04_measure_cm(sensor);
 
 	if (actual_distance < 0) {
 	  actual_distance = -1;
@@ -142,7 +140,6 @@ extern "C" {void app_main(void) {
 	  pwm_prev = pwm;
 	  pwm = output;
 
-	  pwm = -10;
 	  if ((pwm - pwm_prev) > PWM_SLOPE)
 	  {
 	    pwm = pwm_prev + PWM_SLOPE;
