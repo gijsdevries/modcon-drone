@@ -36,7 +36,7 @@ extern "C" {void app_main(void) {
   bool led_state = false;
 
   //TODO CHANGE THIS BACK TO IDLE
-  operation_state = PWM_CONTROL;
+  operation_state = IDLE;
 
   int debug_counter = 1;
   int64_t time = 0; //time since running in ms
@@ -179,7 +179,7 @@ extern "C" {void app_main(void) {
 	  pid_struct.output = output;
 
 	  esp_now_send(broadcastAddress, (uint8_t *) &pid_struct, sizeof(pid_struct));
-	  printf("PID debug info send succes\n");
+	  printf("PID debug info send succes ");
 	}
 #endif
 	vTaskDelay(dT*1000 / portTICK_PERIOD_MS);

@@ -15,7 +15,7 @@
 #define ESPNOW_WIFI_MODE WIFI_MODE_STA
 #define ESPNOW_WIFI_IF   WIFI_IF_STA
 
-#define CSV_LOG
+//#define CSV_LOG
 //TODO add csv file for logging
 
 /// ------------------------------ ESPNOW ------------------------------ /// 
