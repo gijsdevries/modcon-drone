@@ -15,7 +15,7 @@
 #include "uart.h"
 
 #define dT 0.01
-#define DEBUG_PRINT_INTERVAL 1000
+#define DEBUG_PRINT_INTERVAL 5000
 
 #define MAX_PWM 250
 #define MIN_PWM 80
@@ -25,7 +25,6 @@
 #define BUILTIN_LED (gpio_num_t)2
 #define DEBUG
 
-//TODO read out adc and send with espnow
 //TODO read out mpu and send with espnow
 
 //global variables
@@ -39,7 +38,7 @@ extern "C" {void app_main(void) {
   //TODO CHANGE THIS BACK TO IDLE
   operation_state = PID_CONTROL;
 
-  int debug_counter = 0;
+  int debug_counter = 1;
 
   kp = 0.10;
   ki = 0.10;
@@ -101,6 +100,7 @@ extern "C" {void app_main(void) {
 	  pwm = MIN_PWM;
 
 	setPWM(pwm);
+
 #ifdef DEBUG
 	debug_counter++;
 	if (debug_counter > DEBUG_PRINT_INTERVAL) {
@@ -165,10 +165,10 @@ extern "C" {void app_main(void) {
 	  setPWM(pwm);
 	}
 #ifdef DEBUG
-	debug_counter++;
-	if (debug_counter > DEBUG_PRINT_INTERVAL / 136)
+	int64_t time = esp_timer_get_time() / 1000; //display in ms
+	if (time > DEBUG_PRINT_INTERVAL * debug_counter)
 	{
-	  int64_t time = esp_timer_get_time() / 1000; //display in ms
+	  debug_counter++;
 	  printf("time since running: %lld\n", time);
 
 	  /*
@@ -190,8 +190,6 @@ extern "C" {void app_main(void) {
 	    printf("SENDING NOW PID debug info send fail\n");
 	  }
 	  */
-
-	  debug_counter = 0;
 	} 
 	vTaskDelay(dT*1000 / portTICK_PERIOD_MS);
 #endif	
