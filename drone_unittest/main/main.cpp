@@ -44,27 +44,11 @@
 #include "i2c.h"
 
 
-extern "C" {
-#include <stdio.h>
-#include "driver/i2c.h"
-#include "esp_log.h"
-#include "mpu6050.h"
-#include "roll_pitch.h"
-#include "quaternions.h"
-
-#include "i2c.h"
-
-#define I2C_MASTER_SCL_IO    22 // SCL pin
-#define I2C_MASTER_SDA_IO    21 // SDA pin
-#define I2C_MASTER_FREQ_HZ   400000
-#define I2C_MASTER_NUM       I2C_NUM_0
-#define ESP_INTR_FLAG_DEFAULT 0
-
-void app_main(void) {
+extern "C" {void app_main(void) {
 
     i2c_master_init();
 
-    //init_mpu();
+    init_mpu();
     /*
     esp_err_t ret;
     int16_t accel_x, accel_y, accel_z;
