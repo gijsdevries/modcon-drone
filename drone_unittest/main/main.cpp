@@ -10,6 +10,7 @@
 #include "pwm.h"
 #include "adc.h"
 
+/*
 extern "C" {void app_main(void) {
   //TODO add mpu read tester
 
@@ -46,3 +47,13 @@ extern "C" {void app_main(void) {
     vTaskDelay(100 / portTICK_PERIOD_MS); 
   }
 }}
+*/
+
+extern "C" {void app_main(void) {
+  while (1) {
+    printf("hello world\n");
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+  }
+}}
+
