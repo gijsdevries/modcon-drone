@@ -9,6 +9,7 @@
 /* USER INCLUDES */
 #include "pwm.h"
 #include "adc.h"
+#include "i2c.h"
 
 /*
 extern "C" {void app_main(void) {
@@ -50,10 +51,10 @@ extern "C" {void app_main(void) {
 */
 
 extern "C" {void app_main(void) {
-  while (1) {
+  while (1) 
+  {
     printf("hello world\n");
     vTaskDelay(1000 / portTICK_PERIOD_MS);
-
   }
 }}
 
