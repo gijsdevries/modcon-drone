@@ -6,6 +6,56 @@
 i2c_master_dev_handle_t dev_handle;
 i2c_master_bus_handle_t bus_handle;
 
+void init_mpu() {
+  /*
+  esp_err_t ret;
+  int16_t accel_x, accel_y, accel_z;
+  int16_t gyro_x, gyro_y, gyro_z;
+  float accel_x_g, accel_y_g, accel_z_g;
+  float gyro_x_dps, gyro_y_dps, gyro_z_dps;
+  float accel_bias[3] = {0.00f, 0.00f, 0.00f};
+  float gyro_bias[3] = {0.00f, 0.00f, 0.00f};
+
+  i2c_config_t conf = {
+    .mode = I2C_MODE_MASTER,
+    .sda_io_num = I2C_MASTER_SDA_IO,
+    .scl_io_num = I2C_MASTER_SCL_IO,
+    .sda_pullup_en = GPIO_PULLUP_ENABLE,
+    .scl_pullup_en = GPIO_PULLUP_ENABLE,
+    .master = { .clk_speed = I2C_MASTER_FREQ_HZ }
+  };
+
+  ret = i2c_param_config(I2C_MASTER_NUM, &conf);
+  if (ret != ESP_OK) {
+    printf("I2C param config failed\n");
+    return;
+  }
+
+  ret = i2c_driver_install(I2C_MASTER_NUM, conf.mode, 0, 0, ESP_INTR_FLAG_DEFAULT);
+  if (ret != ESP_OK) {
+    printf("I2C driver install failed\n");
+    return;
+  }
+
+  // Initialize MPU6050
+  ret = mpu6050_init(I2C_MASTER_NUM);
+  if (ret != ESP_OK) {
+    printf("Initialization failed\n");
+    return;
+  }
+
+  // Calibrate the MPU6050
+  mpu6050_calibrate(I2C_MASTER_NUM, accel_bias, gyro_bias);
+  printf("Calibration complete\n");
+
+  // Initialize roll and pitch calculations
+  roll_pitch_init();
+
+  // Initialize Quaternion
+  Quaternion q;
+  quaternion_init(&q);
+  */
+}
 
 uint8_t i2c_distance() {
   i2c_write(SYSRANGE__START); //start range in single mode
@@ -50,15 +100,15 @@ uint8_t i2c_read(uint8_t msg_type) {
   switch (msg_type) {
     case RESULT__INTERRUPT_STATUS_GPIO: 
       {
-        uint8_t msg[2] = {0x00, 0x4F};
-        ESP_ERROR_CHECK(i2c_master_transmit_receive(dev_handle, msg, 2, &i2c_recieved, 1, I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS));
-        break;
+	uint8_t msg[2] = {0x00, 0x4F};
+	ESP_ERROR_CHECK(i2c_master_transmit_receive(dev_handle, msg, 2, &i2c_recieved, 1, I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS));
+	break;
       }
     case RESULT__RANGE_VAL: 
       {
-        uint8_t msg[2] = {0x00, 0x62};
-        ESP_ERROR_CHECK(i2c_master_transmit_receive(dev_handle, msg, 2, &i2c_recieved, 1, I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS));
-        break;
+	uint8_t msg[2] = {0x00, 0x62};
+	ESP_ERROR_CHECK(i2c_master_transmit_receive(dev_handle, msg, 2, &i2c_recieved, 1, I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS));
+	break;
       }
     default: 
       printf("ERR i2c_read(): invalid argument recieved\n");
@@ -71,20 +121,20 @@ void i2c_write(uint8_t msg_type) {
   switch (msg_type) {
     case SYSRANGE__START: 
       {
-        uint8_t msg[3] = {0x00, 0x18, 0x01};
-        ESP_ERROR_CHECK(i2c_master_transmit(dev_handle, msg, 3, 1000));
-        break;
+	uint8_t msg[3] = {0x00, 0x18, 0x01};
+	ESP_ERROR_CHECK(i2c_master_transmit(dev_handle, msg, 3, 1000));
+	break;
       }
     case SYSTEM__INTERRUPT_CLEAR: 
       {
-        uint8_t msg[3] = {0x00, 0x15, 0x07};
-        ESP_ERROR_CHECK(i2c_master_transmit(dev_handle, msg, 3, 1000));
-        break;
+	uint8_t msg[3] = {0x00, 0x15, 0x07};
+	ESP_ERROR_CHECK(i2c_master_transmit(dev_handle, msg, 3, 1000));
+	break;
       }
     case SYSTEM__INTERRUPT_CONFIG_GPIO:
       {
-        uint8_t msg[3] = {0x00, 0x14, 0x04};
-        ESP_ERROR_CHECK(i2c_master_transmit(dev_handle, msg, 3, 1000));
+	uint8_t msg[3] = {0x00, 0x14, 0x04};
+	ESP_ERROR_CHECK(i2c_master_transmit(dev_handle, msg, 3, 1000));
       }
     default:
       printf("ERR i2c_write(): invalid argument recieved\n");

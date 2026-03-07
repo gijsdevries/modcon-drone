@@ -26,6 +26,24 @@
  * Date: [28/7/2024]
  ********************************************************************************************/
 
+
+#include <stdio.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "driver/gpio.h"
+#include "sdkconfig.h"
+#include "esp_log.h"
+#include "hc_sr04.h"
+#include "mpu6050.h"
+#include "roll_pitch.h"
+#include "quaternions.h"
+
+//USER INCLUDES
+#include "pwm.h"
+#include "adc.h"
+#include "i2c.h"
+
+
 extern "C" {
 #include <stdio.h>
 #include "driver/i2c.h"
@@ -34,6 +52,8 @@ extern "C" {
 #include "roll_pitch.h"
 #include "quaternions.h"
 
+#include "i2c.h"
+
 #define I2C_MASTER_SCL_IO    22 // SCL pin
 #define I2C_MASTER_SDA_IO    21 // SDA pin
 #define I2C_MASTER_FREQ_HZ   400000
@@ -41,6 +61,11 @@ extern "C" {
 #define ESP_INTR_FLAG_DEFAULT 0
 
 void app_main(void) {
+
+    i2c_master_init();
+
+    //init_mpu();
+    /*
     esp_err_t ret;
     int16_t accel_x, accel_y, accel_z;
     int16_t gyro_x, gyro_y, gyro_z;
@@ -118,6 +143,8 @@ void app_main(void) {
 
         vTaskDelay(2000 / portTICK_PERIOD_MS);
     }
+    */
+
 }}
 
 

@@ -5,6 +5,12 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
+#include "mpu6050.h"
+#include "roll_pitch.h"
+#include "quaternions.h"
+
+#define ESP_INTR_FLAG_DEFAULT 0
+
 #define I2C_MASTER_SCL_IO           (gpio_num_t)22              /*!< GPIO number used for I2C master clock */
 #define I2C_MASTER_SDA_IO           (gpio_num_t)21              /*!< GPIO number used for I2C master data  */
 #define I2C_MASTER_NUM              I2C_NUM_0                   /*!< I2C port number for master dev */
@@ -14,6 +20,8 @@
 
 extern i2c_master_dev_handle_t dev_handle;
 extern i2c_master_bus_handle_t bus_handle;
+
+void init_mpu();
 
 void i2c_master_init();
 uint8_t i2c_distance();
