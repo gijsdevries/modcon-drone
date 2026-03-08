@@ -15,7 +15,7 @@
 #define ESPNOW_WIFI_MODE WIFI_MODE_STA
 #define ESPNOW_WIFI_IF   WIFI_IF_STA
 
-#define CSV_LOG
+//#define CSV_LOG
 
 /// ------------------------------ ESPNOW ------------------------------ /// 
 
@@ -201,21 +201,21 @@ static void rx_task(void *arg) {
 	myOpState.operation_state = IDLE;
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myOpState, sizeof(myOpState));
 #ifndef CSV_LOG
-	printf("operation state now IDLE\n");
+	printf("operation state now IDLE  ");
 #endif
       }
       else if (data[0] == 'x') {
         myOpState.operation_state = PWM_CONTROL;
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myOpState, sizeof(myOpState));
 #ifndef CSV_LOG
-	printf("operation state now PWM_CONTROL\n");
+	printf("operation state now PWM_CONTROL  ");
 #endif
       }
       else if (data[0] == 'c') {
         myOpState.operation_state = PID_CONTROL;
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myOpState, sizeof(myOpState));
 #ifndef CSV_LOG
-	printf("operation state now PID_CONTROL\n");
+	printf("operation state now PID_CONTROL  ");
 #endif
       }
       else {
