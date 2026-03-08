@@ -35,7 +35,6 @@ uint8_t operation_state;
 extern "C" {void app_main(void) {
   bool led_state = false;
 
-  //TODO CHANGE THIS BACK TO IDLE
   operation_state = IDLE;
 
   int debug_counter = 0;

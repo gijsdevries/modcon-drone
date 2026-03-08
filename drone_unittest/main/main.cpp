@@ -26,7 +26,7 @@
  * Date: [28/7/2024]
  ********************************************************************************************/
 
-
+extern "C" {
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -43,13 +43,8 @@
 #include "adc.h"
 #include "i2c.h"
 
+void app_main(void) {
 
-extern "C" {void app_main(void) {
-
-    i2c_master_init();
-
-    init_mpu();
-    /*
     esp_err_t ret;
     int16_t accel_x, accel_y, accel_z;
     int16_t gyro_x, gyro_y, gyro_z;
@@ -115,19 +110,19 @@ extern "C" {void app_main(void) {
         quaternion_update(&q, gyro_x_dps, gyro_y_dps, gyro_z_dps, accel_x_g, accel_y_g, accel_z_g, 0.01f); // 10 ms time step
 
         // Print results
-        printf("Accel: X=%0.2f m/s^2\n\n", accel_x_g);
-        //printf("Gyro: X=%0.2f deg/s, Y=%0.2f deg/s, Z=%0.2f deg/s\n", gyro_x_dps, gyro_y_dps, gyro_z_dps);
-        //printf("Roll: %0.2f degrees\n", roll_get());
-        //printf("Pitch: %0.2f degrees\n", pitch_get());
+        printf("Accel: X=%0.2f m/s^2 Accel: Y=%0.2f m/s^2 Accel: Z=%0.2f m/s^2\n", accel_x_g, accel_y_g, accel_z_g);
+
+        printf("Gyro: X=%0.2f deg/s, Y=%0.2f deg/s, Z=%0.2f deg/s\n", gyro_x_dps, gyro_y_dps, gyro_z_dps);
+        printf("Roll: %0.2f degrees\n", roll_get());
+        printf("Pitch: %0.2f degrees\n", pitch_get());
 
         // Print Quaternion-based Roll, Pitch, Yaw
-        //printf("Quaternion Roll: %0.2f degrees\n", quaternion_get_roll(&q));
-        //printf("Quaternion Pitch: %0.2f degrees\n", quaternion_get_pitch(&q));
-        //printf("Quaternion Yaw: %0.2f degrees\n", quaternion_get_yaw(&q));
+        printf("Quaternion Roll: %0.2f degrees\n", quaternion_get_roll(&q));
+        printf("Quaternion Pitch: %0.2f degrees\n", quaternion_get_pitch(&q));
+        printf("Quaternion Yaw: %0.2f degrees\n\n", quaternion_get_yaw(&q));
 
         vTaskDelay(2000 / portTICK_PERIOD_MS);
     }
-    */
 
 }}
 

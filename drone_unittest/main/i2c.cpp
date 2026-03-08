@@ -7,7 +7,6 @@ i2c_master_dev_handle_t dev_handle;
 i2c_master_bus_handle_t bus_handle;
 
 void init_mpu() {
-  /*
   esp_err_t ret;
   int16_t accel_x, accel_y, accel_z;
   int16_t gyro_x, gyro_y, gyro_z;
@@ -43,6 +42,7 @@ void init_mpu() {
     printf("Initialization failed\n");
     return;
   }
+  /*
 
   // Calibrate the MPU6050
   mpu6050_calibrate(I2C_MASTER_NUM, accel_bias, gyro_bias);
