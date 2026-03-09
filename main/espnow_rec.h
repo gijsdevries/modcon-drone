@@ -61,6 +61,8 @@ extern float kp;
 extern float ki;
 extern float kd;
 
+extern float error, error_sum, error_div, error_prev, pwm, output;
+
 void esp_now_full_init();
 
 #define ESP_NOW_DEBUG

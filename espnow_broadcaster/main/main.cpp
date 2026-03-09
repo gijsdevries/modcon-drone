@@ -15,7 +15,8 @@
 #define ESPNOW_WIFI_MODE WIFI_MODE_STA
 #define ESPNOW_WIFI_IF   WIFI_IF_STA
 
-//#define CSV_LOG
+#define CSV_LOG
+//#define AUTOMATIC_TEST
 
 /// ------------------------------ ESPNOW ------------------------------ /// 
 
@@ -156,42 +157,42 @@ static void rx_task(void *arg) {
     if (rxBytes > 0) {
 
       if (data[0] == 'w') {
-        my_pid_factor.kp += 0.05; 
+        my_pid_factor.kp += 0.15; 
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &my_pid_factor, sizeof(my_pid_factor));
 #ifndef CSV_LOG
         printf("updated pid factors kp=%f, ki=%f, kd=%f  ", my_pid_factor.kp,my_pid_factor.ki,my_pid_factor.kd);
 #endif
       }
       else if (data[0] == 's') {
-        my_pid_factor.kp -= 0.05; 
+        my_pid_factor.kp -= 0.15; 
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &my_pid_factor, sizeof(my_pid_factor));
 #ifndef CSV_LOG
         printf("updated pid factors kp=%f, ki=%f, kd=%f  ", my_pid_factor.kp,my_pid_factor.ki,my_pid_factor.kd);
 #endif
       }
       else if (data[0] == 'e') {
-        my_pid_factor.ki += 0.05; 
+        my_pid_factor.ki += 0.15; 
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &my_pid_factor, sizeof(my_pid_factor));
 #ifndef CSV_LOG
         printf("updated pid factors kp=%f, ki=%f, kd=%f  ", my_pid_factor.kp,my_pid_factor.ki,my_pid_factor.kd);
 #endif
       }
       else if (data[0] == 'd') {
-        my_pid_factor.ki -= 0.05; 
+        my_pid_factor.ki -= 0.15; 
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &my_pid_factor, sizeof(my_pid_factor));
 #ifndef CSV_LOG
         printf("updated pid factors kp=%f, ki=%f, kd=%f  ", my_pid_factor.kp,my_pid_factor.ki,my_pid_factor.kd);
 #endif
       }
       else if (data[0] == 'r') {
-        my_pid_factor.kd += 0.05; 
+        my_pid_factor.kd += 0.15; 
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &my_pid_factor, sizeof(my_pid_factor));
 #ifndef CSV_LOG
         printf("updated pid factors kp=%f, ki=%f, kd=%f  ", my_pid_factor.kp,my_pid_factor.ki,my_pid_factor.kd);
 #endif
       }
       else if (data[0] == 'f') {
-        my_pid_factor.kd -= 0.05; 
+        my_pid_factor.kd -= 0.15; 
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &my_pid_factor, sizeof(my_pid_factor));
 #ifndef CSV_LOG
         printf("updated pid factors kp=%f, ki=%f, kd=%f  ", my_pid_factor.kp,my_pid_factor.ki,my_pid_factor.kd);
@@ -284,9 +285,9 @@ extern "C" {void app_main(void)
     myData.msg_type = DISTANCE;
 
     my_pid_factor.msg_type = PID_FACTOR;
-    my_pid_factor.kp = 0.08;
-    my_pid_factor.ki = 1.13;
-    my_pid_factor.kd = 0.80;
+    my_pid_factor.kp = 2;
+    my_pid_factor.ki = 0.3;
+    my_pid_factor.kd = 0;
     esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &my_pid_factor, sizeof(my_pid_factor));
 
     while (result != ESP_OK) {
@@ -310,8 +311,34 @@ extern "C" {void app_main(void)
 
     bool led_state = false;
 
+#ifdef CSV_LOG
+    printf("csv log activated\n");
+#endif
+
+#ifdef AUTOMATIC_TEST
+    myData.distance = 0;
+    esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
+    vTaskDelay(5000 / portTICK_PERIOD_MS);
+
+    myData.distance = 30;
+    esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
+    vTaskDelay(15000 / portTICK_PERIOD_MS);
+
+    myData.distance = 80;
+    esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
+    vTaskDelay(15000 / portTICK_PERIOD_MS);
+
+    myData.distance = 50;
+    esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
+    vTaskDelay(5000 / portTICK_PERIOD_MS);
+
+    myData.distance = 0;
+    esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
+#endif
+
     while (1)
     {
+
       switch (myOpState.operation_state) {
 
 	case IDLE: //IDLE

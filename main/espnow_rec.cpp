@@ -28,6 +28,13 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
 #ifdef ESP_NOW_DEBUG
       printf("recieved operation_state: %d\n", operation_state);
 #endif
+      error = 0;
+      error_sum = 0;
+      error_div = 0;
+      error_prev = 0;
+      pwm = 0;
+      output = 0;
+
       break; 
     case PID_FACTOR:
       static pid_factor recPID;

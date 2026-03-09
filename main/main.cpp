@@ -14,10 +14,9 @@
 #include "adc.h"
 #include "uart.h"
 
-#define dT 0.01
 #define DEBUG_PRINT_INTERVAL 1000 //sending debug info in ms
 
-#define MAX_PWM 250
+#define MAX_PWM 180
 #define MIN_PWM 80
 
 #define PWM_SLOPE 1
@@ -28,21 +27,20 @@
 //TODO read out mpu and send with espnow
 
 //global variables
-float error, error_sum, error_div, error_prev, desired_distance, actual_distance, pwm, pwm_prev, output;
+float error, error_sum, error_div, error_prev, desired_distance, actual_distance, actual_dis_prev, pwm, pwm_prev, output;
 float kp, ki, kd;
 uint8_t operation_state;
 
 extern "C" {void app_main(void) {
+  actual_dis_prev = 0;
   bool led_state = false;
 
   operation_state = IDLE;
 
   int debug_counter = 0;
   int64_t time = 0; //time since running in ms
-
-  kp = 0.10;
-  ki = 0.10;
-  kd = 0.10;
+  int64_t time_prev = 0;
+  int64_t dtime = 0;
 
   desired_distance = 30.0;
 
@@ -69,11 +67,13 @@ extern "C" {void app_main(void) {
   setPWM(0);
   vTaskDelay(3000 / portTICK_PERIOD_MS);
 
+  time = esp_timer_get_time() / 1000; //display in ms
+
   while (1) {
     switch (operation_state) {
 
       case IDLE: //IDLE
-	//LED blinking fast
+		 //LED blinking fast
 	setPWM(0);
 	gpio_set_level((gpio_num_t)2, led_state);
 	led_state = !led_state; 
@@ -81,7 +81,7 @@ extern "C" {void app_main(void) {
 	break;
 
       case PWM_CONTROL: //PWM RECIEVER
-	//LED ON 
+			//LED ON 
 	gpio_set_level((gpio_num_t)2, 1);
 
 	pwm_prev = pwm;
@@ -119,47 +119,60 @@ extern "C" {void app_main(void) {
 	  printf("pwm debug info send succes ");
 	}
 #endif
-	vTaskDelay(dT*1000 / portTICK_PERIOD_MS);
+	vTaskDelay(10 / portTICK_PERIOD_MS);
 	break;
 
       case PID_CONTROL: //PID LED OFF
 	gpio_set_level((gpio_num_t)2, 0);
+	time_prev = time;
+	time = esp_timer_get_time() / 1000; //display in ms
+	dtime = time - time_prev;
+	//dtime /= 1000.0f;
+
+	if (dtime <= 0)
+	  dtime = 0.01;
+
+
+	//printf("time: %lld, time_prev: %lld, dtime: %lld\n", time, time_prev, dtime);
 	actual_distance = hc_sr04_measure_cm(sensor);
 
 	if (actual_distance < 0) {
-	  actual_distance = -1;
+	  actual_distance = actual_dis_prev;
 	}
 	else {
-	  error = desired_distance - actual_distance;
-	  error_sum += error * dT;
-	  error_div = (error - error_prev) / dT;
-	  output = error * kp + error_sum * ki + error_div * kd;
-	  error_prev = error;
-
-	  pwm_prev = pwm;
-	  pwm = output;
-
-	  if ((pwm - pwm_prev) > PWM_SLOPE)
-	  {
-	    pwm = pwm_prev + PWM_SLOPE;
-	    vTaskDelay((100) / portTICK_PERIOD_MS);
-	  } 
-	  else if ((pwm - pwm_prev) < -PWM_SLOPE)
-	  {
-	    pwm = pwm_prev - PWM_SLOPE;
-	    vTaskDelay((100) / portTICK_PERIOD_MS);
-	  }
-
-	  if (pwm > MAX_PWM)
-	    pwm = MAX_PWM;
-	  else if (pwm < MIN_PWM)
-	    pwm = MIN_PWM;
-
-	  setPWM(pwm);
+	  actual_dis_prev = actual_distance;
 	}
 
+	error = desired_distance - actual_distance;
+	error_sum += error * dtime;
+	error_div = (error - error_prev) / dtime;
+	output = error * kp + (error_sum * ki) / 1000 + (error_div * kd) / 1000;
+	error_prev = error;
+
+	pwm_prev = pwm;
+	pwm = output;
+
+	/*
+	if ((pwm - pwm_prev) > PWM_SLOPE)
+	{
+	  pwm = pwm_prev + PWM_SLOPE;
+	  vTaskDelay((100) / portTICK_PERIOD_MS);
+	} 
+	else if ((pwm - pwm_prev) < -PWM_SLOPE)
+	{
+	  pwm = pwm_prev - PWM_SLOPE;
+	  vTaskDelay((100) / portTICK_PERIOD_MS);
+	}
+	*/
+
+	if (pwm > MAX_PWM)
+	  pwm = MAX_PWM;
+	else if (pwm < MIN_PWM)
+	  pwm = MIN_PWM;
+
+	setPWM(pwm);
+
 #ifdef DEBUG
-	time = esp_timer_get_time() / 1000; //display in ms
 	if (time > DEBUG_PRINT_INTERVAL * debug_counter)
 	{
 	  debug_counter++;
@@ -175,9 +188,10 @@ extern "C" {void app_main(void) {
 
 	  esp_now_send(broadcastAddress, (uint8_t *) &pid_struct, sizeof(pid_struct));
 	  printf("PID debug info send succes ");
+	  vTaskDelay(10 / portTICK_PERIOD_MS);
+
 	}
 #endif
-	vTaskDelay(dT*1000 / portTICK_PERIOD_MS);
 	break;
     }
     vTaskDelay(1 / portTICK_PERIOD_MS);
