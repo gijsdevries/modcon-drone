@@ -35,9 +35,11 @@ extern "C" {void app_main(void) {
   actual_dis_prev = 0;
   bool led_state = false;
 
-  operation_state = IDLE;
+  //TODO change back
+  operation_state = PWM_CONTROL;
 
-  int debug_counter = 0;
+  int debug_counter = 1;
+
   int64_t time = 0; //time since running in ms
   int64_t time_prev = 0;
   int64_t dtime = 0;
@@ -67,8 +69,6 @@ extern "C" {void app_main(void) {
   setPWM(0);
   vTaskDelay(3000 / portTICK_PERIOD_MS);
 
-  time = esp_timer_get_time() / 1000; //display in ms
-
   while (1) {
     switch (operation_state) {
 
@@ -94,14 +94,6 @@ extern "C" {void app_main(void) {
 
 	setPWM(pwm);
 
-#ifdef DEBUG
-	time = esp_timer_get_time() / 1000; //display in ms
-	if (time > DEBUG_PRINT_INTERVAL * debug_counter)
-	{
-	  debug_counter++;
-	  send_debug_info();
-	}
-#endif
 	vTaskDelay(10 / portTICK_PERIOD_MS);
 	break;
 
@@ -114,9 +106,8 @@ extern "C" {void app_main(void) {
 	if (dtime <= 0)
 	  dtime = 0.01;
 
-
 	//printf("time: %lld, time_prev: %lld, dtime: %lld\n", time, time_prev, dtime);
-	actual_distance = hc_sr04_measure_cm(sensor);
+	//actual_distance = hc_sr04_measure_cm(sensor);
 
 	if (actual_distance < 0) {
 	  actual_distance = actual_dis_prev;
@@ -141,16 +132,22 @@ extern "C" {void app_main(void) {
 
 	setPWM(pwm);
 
-#ifdef DEBUG
-	if (time > DEBUG_PRINT_INTERVAL * debug_counter)
-	{
-	  debug_counter++;
-	  send_debug_info();
-	  vTaskDelay(10 / portTICK_PERIOD_MS);
-	}
-#endif
 	break;
     }
+    //TODO test
+#ifdef DEBUG
+    time = esp_timer_get_time() / 1000; //display in ms
+
+    if (!(operation_state == IDLE))
+    {
+      if (time > DEBUG_PRINT_INTERVAL * debug_counter)
+      {
+	debug_counter++;
+	send_debug_info();
+	vTaskDelay(10 / portTICK_PERIOD_MS);
+      }
+    }
+#endif
     vTaskDelay(1 / portTICK_PERIOD_MS);
   } 
 }}

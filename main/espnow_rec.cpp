@@ -101,6 +101,7 @@ void esp_now_full_init() {
 //TODO test if this function works
 void send_debug_info() {
   pid_struct pid_struct;
+  pid_struct.msg_type = PID_DRONE;
 
   pid_struct.time = esp_timer_get_time() / 1000;
   pid_struct.error = error;
