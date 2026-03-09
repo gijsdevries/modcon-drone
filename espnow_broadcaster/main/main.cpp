@@ -15,8 +15,7 @@
 #define ESPNOW_WIFI_MODE WIFI_MODE_STA
 #define ESPNOW_WIFI_IF   WIFI_IF_STA
 
-#define CSV_LOG
-//#define AUTOMATIC_TEST
+//#define CSV_LOG
 
 /// ------------------------------ ESPNOW ------------------------------ /// 
 
@@ -313,27 +312,6 @@ extern "C" {void app_main(void)
 
 #ifdef CSV_LOG
     printf("csv log activated\n");
-#endif
-
-#ifdef AUTOMATIC_TEST
-    myData.distance = 0;
-    esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
-    vTaskDelay(5000 / portTICK_PERIOD_MS);
-
-    myData.distance = 30;
-    esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
-    vTaskDelay(15000 / portTICK_PERIOD_MS);
-
-    myData.distance = 80;
-    esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
-    vTaskDelay(15000 / portTICK_PERIOD_MS);
-
-    myData.distance = 50;
-    esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
-    vTaskDelay(5000 / portTICK_PERIOD_MS);
-
-    myData.distance = 0;
-    esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
 #endif
 
     while (1)
