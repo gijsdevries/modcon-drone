@@ -87,12 +87,6 @@ extern "C" {void app_main(void) {
 	pwm_prev = pwm;
 	pwm = desired_distance;
 
-	if ((pwm - pwm_prev) > PWM_SLOPE)
-	{
-	  pwm = pwm_prev + PWM_SLOPE;
-	  vTaskDelay((100) / portTICK_PERIOD_MS);
-	} 
-
 	if (pwm > MAX_PWM)
 	  pwm = MAX_PWM;
 	else if (pwm < MIN_PWM)
@@ -105,18 +99,7 @@ extern "C" {void app_main(void) {
 	if (time > DEBUG_PRINT_INTERVAL * debug_counter)
 	{
 	  debug_counter++;
-	  pid_struct.time = time;
-	  pid_struct.error = error;
-	  pid_struct.error_sum = error_sum;
-	  pid_struct.error_div = error_div;
-	  pid_struct.error_prev = error_prev;
-	  pid_struct.desired_distance = desired_distance;
-	  pid_struct.actual_distance = actual_distance;
-	  pid_struct.pwm = pwm;
-	  pid_struct.output = output;
-
-	  esp_now_send(broadcastAddress, (uint8_t *) &pid_struct, sizeof(pid_struct));
-	  printf("pwm debug info send succes ");
+	  send_debug_info();
 	}
 #endif
 	vTaskDelay(10 / portTICK_PERIOD_MS);
@@ -127,7 +110,6 @@ extern "C" {void app_main(void) {
 	time_prev = time;
 	time = esp_timer_get_time() / 1000; //display in ms
 	dtime = time - time_prev;
-	//dtime /= 1000.0f;
 
 	if (dtime <= 0)
 	  dtime = 0.01;
@@ -152,19 +134,6 @@ extern "C" {void app_main(void) {
 	pwm_prev = pwm;
 	pwm = output;
 
-	/*
-	if ((pwm - pwm_prev) > PWM_SLOPE)
-	{
-	  pwm = pwm_prev + PWM_SLOPE;
-	  vTaskDelay((100) / portTICK_PERIOD_MS);
-	} 
-	else if ((pwm - pwm_prev) < -PWM_SLOPE)
-	{
-	  pwm = pwm_prev - PWM_SLOPE;
-	  vTaskDelay((100) / portTICK_PERIOD_MS);
-	}
-	*/
-
 	if (pwm > MAX_PWM)
 	  pwm = MAX_PWM;
 	else if (pwm < MIN_PWM)
@@ -176,20 +145,8 @@ extern "C" {void app_main(void) {
 	if (time > DEBUG_PRINT_INTERVAL * debug_counter)
 	{
 	  debug_counter++;
-	  pid_struct.time = time;
-	  pid_struct.error = error;
-	  pid_struct.error_sum = error_sum;
-	  pid_struct.error_div = error_div;
-	  pid_struct.error_prev = error_prev;
-	  pid_struct.desired_distance = desired_distance;
-	  pid_struct.actual_distance = actual_distance;
-	  pid_struct.pwm = pwm;
-	  pid_struct.output = output;
-
-	  esp_now_send(broadcastAddress, (uint8_t *) &pid_struct, sizeof(pid_struct));
-	  printf("PID debug info send succes ");
+	  send_debug_info();
 	  vTaskDelay(10 / portTICK_PERIOD_MS);
-
 	}
 #endif
 	break;

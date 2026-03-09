@@ -97,3 +97,21 @@ void esp_now_full_init() {
     return;
   }
 }
+
+//TODO test if this function works
+void send_debug_info() {
+  pid_struct pid_struct;
+
+  pid_struct.time = esp_timer_get_time() / 1000;
+  pid_struct.error = error;
+  pid_struct.error_sum = error_sum;
+  pid_struct.error_div = error_div;
+  pid_struct.error_prev = error_prev;
+  pid_struct.desired_distance = desired_distance;
+  pid_struct.actual_distance = actual_distance;
+  pid_struct.pwm = pwm;
+  pid_struct.output = output;
+
+  esp_now_send(broadcastAddress, (uint8_t *) &pid_struct, sizeof(pid_struct));
+  printf("PID debug info send succes ");
+}

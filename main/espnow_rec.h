@@ -1,6 +1,7 @@
 #ifndef ESPNOW_REC
 #define ESPNOW_REC
 
+#include "esp_timer.h"
 #include "esp_wifi.h"
 #include "nvs_flash.h"
 #include <stdio.h>
@@ -57,13 +58,12 @@ extern float desired_distance;
 extern uint8_t operation_state;
 extern uint8_t broadcastAddress[];
 
-extern float kp;
-extern float ki;
-extern float kd;
+extern float kp, ki, kd;
 
-extern float error, error_sum, error_div, error_prev, pwm, output;
+extern float error, error_sum, error_div, error_prev, desired_distance, actual_distance, actual_dis_prev, pwm, pwm_prev, output;
 
 void esp_now_full_init();
+void send_debug_info();
 
 #define ESP_NOW_DEBUG
 
