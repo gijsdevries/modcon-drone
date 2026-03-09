@@ -5,12 +5,10 @@
 #include "sdkconfig.h"
 #include "esp_log.h"
 #include "hc_sr04.h"
-#include "mpu6050.h"
 
 //USER INCLUDES
 #include "pwm.h"
 #include "adc.h"
-#include "i2c.h"
 
 extern "C" {void app_main(void) {
   //TODO add mpu read tester
