@@ -36,7 +36,7 @@ extern "C" {void app_main(void) {
   bool led_state = false;
 
   //TODO change back
-  operation_state = PWM_CONTROL;
+  operation_state = IDLE;
 
   int debug_counter = 1;
 
@@ -138,15 +138,16 @@ extern "C" {void app_main(void) {
 #ifdef DEBUG
     time = esp_timer_get_time() / 1000; //display in ms
 
-    if (!(operation_state == IDLE))
+    if (time > DEBUG_PRINT_INTERVAL * debug_counter)
     {
-      if (time > DEBUG_PRINT_INTERVAL * debug_counter)
+      if (!(operation_state == IDLE))
       {
-	debug_counter++;
 	send_debug_info();
-	vTaskDelay(10 / portTICK_PERIOD_MS);
       }
+      debug_counter++;
+      vTaskDelay(10 / portTICK_PERIOD_MS);
     }
+
 #endif
     vTaskDelay(1 / portTICK_PERIOD_MS);
   } 
