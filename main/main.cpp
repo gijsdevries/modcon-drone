@@ -35,7 +35,6 @@ extern "C" {void app_main(void) {
   actual_dis_prev = 0;
   bool led_state = false;
 
-  //TODO change back
   operation_state = IDLE;
 
   int debug_counter = 1;
@@ -44,7 +43,7 @@ extern "C" {void app_main(void) {
   int64_t time_prev = 0;
   int64_t dtime = 0;
 
-  desired_distance = 30.0;
+  desired_distance = 0;
 
   //used for sending pid data to controller
   pid_struct pid_struct;
@@ -134,7 +133,6 @@ extern "C" {void app_main(void) {
 
 	break;
     }
-    //TODO test
 #ifdef DEBUG
     time = esp_timer_get_time() / 1000; //display in ms
 

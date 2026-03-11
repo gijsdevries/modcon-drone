@@ -15,7 +15,7 @@
 #define ESPNOW_WIFI_MODE WIFI_MODE_STA
 #define ESPNOW_WIFI_IF   WIFI_IF_STA
 
-//#define CSV_LOG
+#define CSV_LOG
 
 /// ------------------------------ ESPNOW ------------------------------ /// 
 
@@ -312,6 +312,7 @@ extern "C" {void app_main(void)
 
 #ifdef CSV_LOG
     printf("csv log activated\n");
+    printf("time, error, error_sum, error_div, error_prev, desired_distance, actual_distance, pwm, output\n");
 #endif
 
     while (1)
