@@ -1,8 +1,15 @@
 import serial
 import time
+import sys
+
+if len(sys.argv) < 2:
+    print(f"Usage: python3 {sys.argv[0]} <serial_port>")
+    sys.exit(1)
+
+port = sys.argv[1]
 
 try:
-    with serial.Serial('/dev/ttyUSB2', 115200, timeout=1) as ser:
+    with serial.Serial(port, 115200, timeout=1) as ser:
 
         ser.write(b"0")
         time.sleep(1)
