@@ -26,7 +26,21 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
     case OPERATION:
       operation_state = incomingData[1];
 #ifdef ESP_NOW_DEBUG
-      printf("recieved operation_state: %d\n", operation_state);
+      switch (operation_state) {
+	case 0:
+	  printf("recieved operation_state: IDLE\n");
+	  break;
+	case 1:
+	  printf("recieved operation_state: PWM_CONTROL\n");
+	  break;
+	case 2:
+	  printf("recieved operation_state: PID_DRONE\n");
+	  break;
+	default:
+	  printf("recieved operation_state: unknown\n");
+	  break;
+
+      }
 #endif
       error = 0;
       error_sum = 0;
