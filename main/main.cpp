@@ -35,15 +35,21 @@ extern "C" {void app_main(void) {
   actual_dis_prev = 0;
   bool led_state = false;
 
-  operation_state = IDLE;
+  //TODO change back
+  operation_state = PID_CONTROL;
 
   int debug_counter = 1;
+
+  //TODO delete
+  kp = 2;
+  ki = 0.3;
 
   int64_t time = 0; //time since running in ms
   int64_t time_prev = 0;
   int64_t dtime = 0;
 
-  desired_distance = 0;
+  //TODO change back
+  desired_distance = 30;
 
   //used for sending pid data to controller
   pid_struct pid_struct;
@@ -105,8 +111,7 @@ extern "C" {void app_main(void) {
 	if (dtime <= 0)
 	  dtime = 0.01;
 
-	//printf("time: %lld, time_prev: %lld, dtime: %lld\n", time, time_prev, dtime);
-	//actual_distance = hc_sr04_measure_cm(sensor);
+	actual_distance = hc_sr04_measure_cm(sensor);
 
 	if (actual_distance < 0) {
 	  actual_distance = actual_dis_prev;

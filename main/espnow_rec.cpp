@@ -127,6 +127,8 @@ void send_debug_info() {
   pid_struct.pwm = pwm;
   pid_struct.output = output;
 
+      printf("time %lld, error %f, error_sum %f, error_div %f, error_prev%f, desired_distance %f, actual_distance %f, pwm %f, output %f\n", pid_struct.time, error, error_sum, error_div, error_prev, desired_distance, actual_distance, pwm, output);
+
   esp_now_send(broadcastAddress, (uint8_t *) &pid_struct, sizeof(pid_struct));
   printf("PID debug info send succes ");
 }
