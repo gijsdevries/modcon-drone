@@ -35,21 +35,15 @@ extern "C" {void app_main(void) {
   actual_dis_prev = 0;
   bool led_state = false;
 
-  //TODO change back
-  operation_state = PID_CONTROL;
+  operation_state = IDLE;
 
   int debug_counter = 1;
-
-  //TODO delete
-  kp = 2;
-  ki = 0.3;
 
   int64_t time = 0; //time since running in ms
   int64_t time_prev = 0;
   int64_t dtime = 0;
 
-  //TODO change back
-  desired_distance = 30;
+  desired_distance = 0;
 
   //used for sending pid data to controller
   pid_struct pid_struct;
@@ -98,8 +92,6 @@ extern "C" {void app_main(void) {
 	  pwm = MIN_PWM;
 
 	setPWM(pwm);
-
-	vTaskDelay(10 / portTICK_PERIOD_MS);
 	break;
 
       case PID_CONTROL: //PID LED OFF
@@ -109,7 +101,7 @@ extern "C" {void app_main(void) {
 	dtime = time - time_prev;
 
 	if (dtime <= 0)
-	  dtime = 0.01;
+	  dtime = 1;
 
 	actual_distance = hc_sr04_measure_cm(sensor);
 
@@ -123,7 +115,7 @@ extern "C" {void app_main(void) {
 	error = desired_distance - actual_distance;
 	error_sum += error * dtime;
 	error_div = (error - error_prev) / dtime;
-	output = error * kp + (error_sum * ki) / 1000 + (error_div * kd) / 1000;
+	output = error * kp + error_sum * ki / 1000 + error_div * kd / 1000;
 	error_prev = error;
 
 	pwm_prev = pwm;
@@ -148,9 +140,8 @@ extern "C" {void app_main(void) {
 	send_debug_info();
       }
       debug_counter++;
-      vTaskDelay(10 / portTICK_PERIOD_MS);
     }
-
+    vTaskDelay(10 / portTICK_PERIOD_MS);
 #endif
     vTaskDelay(1 / portTICK_PERIOD_MS);
   } 
