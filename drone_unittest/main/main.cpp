@@ -6,7 +6,7 @@
 #include "esp_log.h"
 #include "hc_sr04.h"
 
-/* USER INCLUDES */
+//USER INCLUDES
 #include "pwm.h"
 #include "adc.h"
 

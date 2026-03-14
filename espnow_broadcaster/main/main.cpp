@@ -15,7 +15,7 @@
 #define ESPNOW_WIFI_MODE WIFI_MODE_STA
 #define ESPNOW_WIFI_IF   WIFI_IF_STA
 
-//TODO add csv file for logging
+#define CSV_LOG
 
 /// ------------------------------ ESPNOW ------------------------------ /// 
 
@@ -52,6 +52,7 @@ float distance;
 
 typedef struct pid_struct {
   uint8_t msg_type;
+  int64_t time;
   float error; 
   float error_sum;
   float error_div;
@@ -78,7 +79,9 @@ static uint8_t operation_state;
 
 // callback when data is sent
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
+#ifndef CSV_LOG
   printf(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success\n" : "Delivery Fail\n");
+#endif
 }
 
 // callback function that will be executed when data is received
@@ -98,8 +101,13 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
       static pid_struct rec_pid;
       memcpy(&rec_pid, incomingData, sizeof(rec_pid));
 
-      printf("--- Measurements ---\nerror: %f\nerror_sum: %f\nerror_div: %f\nerror_prev: %f\ndesired_distance: %f\nactual_distance: %f\npwm: %f\noutput: %f\n\n\n", 
-          rec_pid.error, rec_pid.error_sum, rec_pid.error_div, rec_pid.error_prev, rec_pid.desired_distance, rec_pid.actual_distance, rec_pid.pwm, rec_pid.output);
+#ifdef CSV_LOG
+      printf("%lld, %f, %f, %f, %f, %f, %f, %f, %f\n", rec_pid.time, rec_pid.error, rec_pid.error_sum, rec_pid.error_div, rec_pid.error_prev, rec_pid.desired_distance, rec_pid.actual_distance, rec_pid.pwm, rec_pid.output);
+      //print in csv format
+#else
+      printf("--- Measurements ---\ntime: %lld\nerror: %f\nerror_sum: %f\nerror_div: %f\nerror_prev: %f\ndesired_distance: %f\nactual_distance: %f\npwm: %f\noutput: %f\n\n\n", 
+          rec_pid.time, rec_pid.error, rec_pid.error_sum, rec_pid.error_div, rec_pid.error_prev, rec_pid.desired_distance, rec_pid.actual_distance, rec_pid.pwm, rec_pid.output);
+#endif
       break;
 
     default:
@@ -148,49 +156,67 @@ static void rx_task(void *arg) {
     if (rxBytes > 0) {
 
       if (data[0] == 'w') {
-        my_pid_factor.kp += 0.05; 
+        my_pid_factor.kp += 0.15; 
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &my_pid_factor, sizeof(my_pid_factor));
+#ifndef CSV_LOG
         printf("updated pid factors kp=%f, ki=%f, kd=%f  ", my_pid_factor.kp,my_pid_factor.ki,my_pid_factor.kd);
+#endif
       }
       else if (data[0] == 's') {
-        my_pid_factor.kp -= 0.05; 
+        my_pid_factor.kp -= 0.15; 
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &my_pid_factor, sizeof(my_pid_factor));
+#ifndef CSV_LOG
         printf("updated pid factors kp=%f, ki=%f, kd=%f  ", my_pid_factor.kp,my_pid_factor.ki,my_pid_factor.kd);
+#endif
       }
       else if (data[0] == 'e') {
-        my_pid_factor.ki += 0.05; 
+        my_pid_factor.ki += 0.03; 
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &my_pid_factor, sizeof(my_pid_factor));
+#ifndef CSV_LOG
         printf("updated pid factors kp=%f, ki=%f, kd=%f  ", my_pid_factor.kp,my_pid_factor.ki,my_pid_factor.kd);
+#endif
       }
       else if (data[0] == 'd') {
-        my_pid_factor.ki -= 0.05; 
+        my_pid_factor.ki -= 0.03; 
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &my_pid_factor, sizeof(my_pid_factor));
+#ifndef CSV_LOG
         printf("updated pid factors kp=%f, ki=%f, kd=%f  ", my_pid_factor.kp,my_pid_factor.ki,my_pid_factor.kd);
+#endif
       }
       else if (data[0] == 'r') {
-        my_pid_factor.kd += 0.05; 
+        my_pid_factor.kd += 0.10; 
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &my_pid_factor, sizeof(my_pid_factor));
+#ifndef CSV_LOG
         printf("updated pid factors kp=%f, ki=%f, kd=%f  ", my_pid_factor.kp,my_pid_factor.ki,my_pid_factor.kd);
+#endif
       }
       else if (data[0] == 'f') {
-        my_pid_factor.kd -= 0.05; 
+        my_pid_factor.kd -= 0.10; 
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &my_pid_factor, sizeof(my_pid_factor));
+#ifndef CSV_LOG
         printf("updated pid factors kp=%f, ki=%f, kd=%f  ", my_pid_factor.kp,my_pid_factor.ki,my_pid_factor.kd);
+#endif
       }
       else if (data[0] == 'z') {
 	myOpState.operation_state = IDLE;
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myOpState, sizeof(myOpState));
-	printf("operation state now IDLE\n");
+#ifndef CSV_LOG
+	printf("operation state now IDLE  ");
+#endif
       }
       else if (data[0] == 'x') {
         myOpState.operation_state = PWM_CONTROL;
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myOpState, sizeof(myOpState));
-	printf("operation state now PWM_CONTROL\n");
+#ifndef CSV_LOG
+	printf("operation state now PWM_CONTROL  ");
+#endif
       }
       else if (data[0] == 'c') {
         myOpState.operation_state = PID_CONTROL;
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myOpState, sizeof(myOpState));
-	printf("operation state now PID_CONTROL\n");
+#ifndef CSV_LOG
+	printf("operation state now PID_CONTROL  ");
+#endif
       }
       else {
         char_distance = atoi(data);
@@ -203,10 +229,14 @@ static void rx_task(void *arg) {
         // Send message via ESP-NOW
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
         if (result == ESP_OK) {
+#ifndef CSV_LOG
           printf("Distance send succes: %f    ", myData.distance);
+#endif
         }
         else {
+#ifndef CSV_LOG
           printf("Unknown error. Distance was valid: %f\n", myData.distance);
+#endif
         }
 
         data[rxBytes] = 0;
@@ -244,7 +274,9 @@ extern "C" {void app_main(void)
 
     // Add peer        
     if (esp_now_add_peer(&peerInfo) != ESP_OK){
+#ifndef CSV_LOG
       printf("Failed to add peer\n");
+#endif
       return;
     }
 
@@ -252,18 +284,22 @@ extern "C" {void app_main(void)
     myData.msg_type = DISTANCE;
 
     my_pid_factor.msg_type = PID_FACTOR;
-    my_pid_factor.kp = 0.08;
-    my_pid_factor.ki = 1.13;
-    my_pid_factor.kd = 0.80;
+    my_pid_factor.kp = 2;
+    my_pid_factor.ki = 0.3;
+    my_pid_factor.kd = 0;
     esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &my_pid_factor, sizeof(my_pid_factor));
 
     while (result != ESP_OK) {
       esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &my_pid_factor, sizeof(my_pid_factor));
+#ifndef CSV_LOG
       printf("failed to send pid factors...\n");
+#endif
       vTaskDelay(200 / portTICK_PERIOD_MS);
     }
 
+#ifndef CSV_LOG
     printf("pid factors send succes\n");
+#endif
 
     uart_init();
     //xTaskCreate(button_monitor, "button_monitor", 4096, NULL, configMAX_PRIORITIES - 1, NULL);
@@ -274,8 +310,14 @@ extern "C" {void app_main(void)
 
     bool led_state = false;
 
+#ifdef CSV_LOG
+    printf("csv log activated\n");
+    printf("time, error, error_sum, error_div, error_prev, desired_distance, actual_distance, pwm, output\n");
+#endif
+
     while (1)
     {
+
       switch (myOpState.operation_state) {
 
 	case IDLE: //IDLE

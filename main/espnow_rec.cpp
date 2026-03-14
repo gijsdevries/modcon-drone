@@ -4,6 +4,9 @@ esp_now_peer_info_t peerInfo;
 
 uint8_t broadcastAddress[] = {0x88, 0x57, 0x21, 0x7a, 0xb1, 0x48};
 
+//random esp at home
+//uint8_t broadcastAddress[] = {0x80, 0xf3, 0xda, 0x54, 0x18, 0x38};
+
 // callback function that will be executed when data is received
 void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
 
@@ -23,8 +26,29 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
     case OPERATION:
       operation_state = incomingData[1];
 #ifdef ESP_NOW_DEBUG
-      printf("recieved operation_state: %d\n", operation_state);
+      switch (operation_state) {
+	case IDLE:
+	  printf("recieved operation_state: IDLE\n");
+	  break;
+	case PWM_CONTROL:
+	  printf("recieved operation_state: PWM_CONTROL\n");
+	  break;
+	case PID_DRONE:
+	  printf("recieved operation_state: PID_DRONE\n");
+	  break;
+	default:
+	  printf("recieved operation_state: unknown\n");
+	  break;
+
+      }
 #endif
+      error = 0;
+      error_sum = 0;
+      error_div = 0;
+      error_prev = 0;
+      pwm = 0;
+      output = 0;
+
       break; 
     case PID_FACTOR:
       static pid_factor recPID;
@@ -86,4 +110,25 @@ void esp_now_full_init() {
     printf("Failed to add peer\n");
     return;
   }
+}
+
+void send_debug_info() {
+  pid_struct pid_struct;
+  pid_struct.msg_type = PID_DRONE;
+
+  //TODO error seems to be the same as desired_distance??
+  pid_struct.time = esp_timer_get_time() / 1000;
+  pid_struct.error = error;
+  pid_struct.error_sum = error_sum;
+  pid_struct.error_div = error_div;
+  pid_struct.error_prev = error_prev;
+  pid_struct.desired_distance = desired_distance;
+  pid_struct.actual_distance = actual_distance;
+  pid_struct.pwm = pwm;
+  pid_struct.output = output;
+
+      //printf("time %lld, error %f, error_sum %f, error_div %f, error_prev%f, desired_distance %f, actual_distance %f, pwm %f, output %f\n", pid_struct.time, error, error_sum, error_div, error_prev, desired_distance, actual_distance, pwm, output);
+
+  esp_now_send(broadcastAddress, (uint8_t *) &pid_struct, sizeof(pid_struct));
+  printf("PID debug info send succes ");
 }

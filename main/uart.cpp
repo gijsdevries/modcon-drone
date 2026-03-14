@@ -19,7 +19,7 @@ int sendData(const char* data)
 {
     const int len = strlen(data);
     const int txBytes = uart_write_bytes(UART_NUM_1, data, len);
-    //TODO dont print when i send \n
+
     printf("send pwm :%s\n", data);
     return txBytes;
 }
