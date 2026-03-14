@@ -20,10 +20,10 @@
 /// ------------------------------ ESPNOW ------------------------------ /// 
 
 //drone esp
-//uint8_t broadcastAddress[] = {0x80, 0xF3, 0xDA, 0x55, 0x9B, 0x00};
+uint8_t broadcastAddress[] = {0x80, 0xF3, 0xDA, 0x55, 0x9B, 0x00};
 
 //random esp at home
-uint8_t broadcastAddress[] = {0x88, 0x57, 0x21, 0x78, 0xaa, 0x80};
+//uint8_t broadcastAddress[] = {0x88, 0x57, 0x21, 0x78, 0xaa, 0x80};
 
 enum MSG_TYPE {
   DISTANCE,
@@ -170,28 +170,28 @@ static void rx_task(void *arg) {
 #endif
       }
       else if (data[0] == 'e') {
-        my_pid_factor.ki += 0.15; 
+        my_pid_factor.ki += 0.03; 
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &my_pid_factor, sizeof(my_pid_factor));
 #ifndef CSV_LOG
         printf("updated pid factors kp=%f, ki=%f, kd=%f  ", my_pid_factor.kp,my_pid_factor.ki,my_pid_factor.kd);
 #endif
       }
       else if (data[0] == 'd') {
-        my_pid_factor.ki -= 0.15; 
+        my_pid_factor.ki -= 0.03; 
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &my_pid_factor, sizeof(my_pid_factor));
 #ifndef CSV_LOG
         printf("updated pid factors kp=%f, ki=%f, kd=%f  ", my_pid_factor.kp,my_pid_factor.ki,my_pid_factor.kd);
 #endif
       }
       else if (data[0] == 'r') {
-        my_pid_factor.kd += 0.15; 
+        my_pid_factor.kd += 0.10; 
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &my_pid_factor, sizeof(my_pid_factor));
 #ifndef CSV_LOG
         printf("updated pid factors kp=%f, ki=%f, kd=%f  ", my_pid_factor.kp,my_pid_factor.ki,my_pid_factor.kd);
 #endif
       }
       else if (data[0] == 'f') {
-        my_pid_factor.kd -= 0.15; 
+        my_pid_factor.kd -= 0.10; 
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &my_pid_factor, sizeof(my_pid_factor));
 #ifndef CSV_LOG
         printf("updated pid factors kp=%f, ki=%f, kd=%f  ", my_pid_factor.kp,my_pid_factor.ki,my_pid_factor.kd);

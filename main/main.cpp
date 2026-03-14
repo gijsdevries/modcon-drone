@@ -19,8 +19,6 @@
 #define MAX_PWM 180
 #define MIN_PWM 80
 
-#define PWM_SLOPE 1
-
 #define BUILTIN_LED (gpio_num_t)2
 #define DEBUG
 
@@ -113,9 +111,9 @@ extern "C" {void app_main(void) {
 	}
 
 	error = desired_distance - actual_distance;
-	error_sum += error * dtime;
-	error_div = (error - error_prev) / dtime;
-	output = error * kp + error_sum * ki / 1000 + error_div * kd / 1000;
+	error_sum += (error * dtime) / 1000;
+	error_div = ((error - error_prev) / dtime) / 1000;
+	output = error * kp + error_sum * ki + error_div * kd;
 	error_prev = error;
 
 	pwm_prev = pwm;

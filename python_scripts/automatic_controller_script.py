@@ -1,6 +1,11 @@
+#automatic python script for letting drone do a basic run
+#run this command to get it started: python3 python_scripts/automatic_controller_script.py /dev/ttyUSB0
+
 import serial
 import time
 import sys
+
+delay = 5
 
 if len(sys.argv) < 2:
     print(f"Usage: python3 {sys.argv[0]} <serial_port>")
@@ -15,25 +20,25 @@ try:
         time.sleep(1)
 
         ser.write(b"c")
-        time.sleep(5)
+        time.sleep(delay)
 
         ser.write(b"30")
-        time.sleep(5)
+        time.sleep(delay)
 
         ser.write(b"50")
-        time.sleep(5)
+        time.sleep(delay)
 
         ser.write(b"80")
-        time.sleep(5)
+        time.sleep(delay)
 
         ser.write(b"50")
-        time.sleep(5)
+        time.sleep(delay)
 
         ser.write(b"30")
-        time.sleep(5)
+        time.sleep(delay)
 
         ser.write(b"0")
-        time.sleep(5)
+        time.sleep(delay)
 
         ser.write(b"z")
         time.sleep(1)
